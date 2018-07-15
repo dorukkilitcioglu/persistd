@@ -23,8 +23,8 @@ class VirtualDesktop(BaseDesktop):
     # Path to VirtualDesktop.exe
     exe_path = None
 
-    def __init__(self, path):
-        super().__init__(path)
+    def __init__(self, base_path, path):
+        super().__init__(base_path, path)
 
         possible_exe_path = os.path.join(path, 'VirtualDesktop.exe')
         if os.path.exists(possible_exe_path):

@@ -5,7 +5,8 @@ from util.persistable import Persistable
 
 class BaseDesktop(Persistable, ABC):
 
-    def __init__(self, path):
+    def __init__(self, base_path, path):
+        self.base_path = base_path
         self.path = path
 
     @abstractmethod
