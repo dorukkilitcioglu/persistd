@@ -1,6 +1,9 @@
 import logging
+import os
+from shutil import copyfile
 
-from util.command_line import run_on_command_line
+from util.command_line import run_on_command_line, kill_mutant
+from util.paths import PROGRAMS_PATH
 
 from program.base_program import BaseProgram
 import settings
@@ -8,17 +11,35 @@ import settings
 logger = logging.getLogger(__name__)
 
 
-class SublimeText(BaseProgram):
+class SublimeTextWindows(BaseProgram):
+
+    @property
+    def sublimeproj_filename(self):
+        return '%s.sublime-project' % self.project_name
+
+    @property
+    def sublimeproj_path(self):
+        return os.path.join(self.persist_path, self.sublimeproj_filename)
+
+    def _kill_mutant(self):
+        kill_mutant(process_name='sublime_text.exe', object_name='Sublime')
+
+    def setup(self):
+        """ Sets up the Sublime Text project
+        """
+        default_proj_path = os.path.join(PROGRAMS_PATH, 'sublime_text', 'default.sublime-project')
+        copyfile(default_proj_path, self.sublimeproj_path)
 
     def start(self):
         """ Starts a brand new instance of SublimeText
         """
-        return_code, _, _ = run_on_command_line([settings.SUBLIME_TEXT_PATH, self.base_path])
+        self._kill_mutant()
+        return_code, _, _ = run_on_command_line([settings.SUBLIME_TEXT_PATH, "-n", self.project_path, "--project", self.sublimeproj_path])
         if return_code is 0:
-            logger.info("Started SublimeText on path %s", self.base_path)
+            logger.info("Started SublimeText on path %s", self.project_path)
             return True
         else:
-            logger.error("Could not start SublimeText on path %s", self.base_path)
+            logger.error("Could not start SublimeText on path %s", self.project_path)
             return False
 
     def restart(self):
