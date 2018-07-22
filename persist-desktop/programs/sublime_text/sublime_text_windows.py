@@ -4,6 +4,7 @@ from shutil import copyfile
 
 from util.command_line import run_on_command_line, kill_mutant
 from util.paths import PROGRAMS_PATH
+from util.savers import save_dict_to_json, load_dict_from_json
 
 from programs.base_program import BaseProgram
 import settings
@@ -18,20 +19,34 @@ class SublimeTextWindows(BaseProgram):
 
     @property
     def sublimeproj_filename(self):
+        """ Filename of the sublime-project file
+        """
         return '%s.sublime-project' % self.project_name
 
     @property
     def sublimeproj_path(self):
+        """ Path of the sublime-project file
+        """
         return os.path.join(self.persist_path, self.sublimeproj_filename)
 
     @property
     def sublime_exe_filename(self):
+        """ Filename of the copied SublimeText executable
+        """
         return 'sublime_text_%s.exe' % self.project_name
 
     @property
     def sublime_exe_path(self):
+        """ Path of the copied SublimeText executable
+        """
         standard_exe_path = settings.SUBLIME_TEXT_PATH
         return os.path.join(os.path.dirname(standard_exe_path), self.sublime_exe_filename)
+
+    @property
+    def object_persist_path(self):
+        """ The path where this object will be persisted
+        """
+        return os.path.join(self.persist_path, 'sublime_text')
 
     def _kill_mutant(self):
         kill_mutant(process_name='sublime_text.exe', object_name='Sublime')
@@ -84,22 +99,25 @@ class SublimeTextWindows(BaseProgram):
             https://www.sublimetext.com/docs/3/api_reference.html#sublime.Window
 
 
-        Here, we implement #2. #3 is probably a better solution over the long run.
+        Here, we implement #1. #3 is probably a better solution over the long run.
         """
-        return_code, _, _ = run_on_command_line([settings.SUBLIME_TEXT_PATH, "--command", "close_window"])
+        return_code, _, _ = run_on_command_line(["taskkill", "-pid", str(self.sublime_pid)])
         if return_code is 0:
             logger.info("Closed SublimeText window")
+            self.sublime_pid = None
             return True
         else:
             logger.error("Could not close SublimeText window")
             return False
 
     def save(self, path=None):
-        """ Nothing to persist except for the folder path
+        """ Saves the variables to json
         """
-        pass
+        path = path or self.object_persist_path
+        save_dict_to_json(self, path)
 
     def load(self, path=None):
-        """ Nothing to persist except for the folder path
+        """ Loads variables from json
         """
-        pass
+        path = path or self.object_persist_path
+        load_dict_from_json(self, path)
