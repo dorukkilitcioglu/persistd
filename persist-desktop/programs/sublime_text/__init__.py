@@ -1,6 +1,6 @@
 import platform
 
-from program.sublime_text.sublime_text_windows import SublimeTextWindows
+from programs.sublime_text.sublime_text_windows import SublimeTextWindows
 
 _implementations = {
     'Windows': SublimeTextWindows,
