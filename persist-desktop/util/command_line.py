@@ -4,15 +4,19 @@ import subprocess
 from util import const
 
 
-def run_on_command_line(command, input=None):
+def run_on_command_line(command, input=None, open_async=False):
     """ Runs a command on command line
 
     Args:
-        command::[str]
+        command::list(str)
             The command to run. The first element in list is the
-                executable, the rest are the arguments
+            executable, the rest are the arguments
         input::bytes
             The input to be fed in as STDIN
+        open_async::bool
+            Whether to open the process as asynchronous. If set,
+            there will not be any communication through stdin and
+            stdout, and the return code may not be set.
 
     Returns:
         return_code::int
@@ -24,10 +28,10 @@ def run_on_command_line(command, input=None):
             The process id of the created process
     """
     sub = subprocess.Popen(command, stdin=subprocess.PIPE if input else None, stdout=subprocess.PIPE)
-    stdout, stderr = sub.communicate(input=input)
-    sub.poll()
+    (stdout, stderr) = (None, None) if open_async else sub.communicate(input=input)
+    sub.poll()  # Try polling it to see if process has terminated
     try:
-        return sub.returncode, stdout.decode('utf-8'), sub.pid
+        return sub.returncode, stdout.decode('utf-8') if stdout else None, sub.pid
     except (AttributeError, UnicodeDecodeError) as err:
         return sub.returncode, err, -1
 
