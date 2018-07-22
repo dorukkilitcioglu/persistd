@@ -125,7 +125,6 @@ class VirtualDesktop(BaseDesktop):
         If desktop_id is None, should launch at the created desktop.
         """
 
-        """ So this doesn't work...
         return_code, stdout, pid = run_on_command_line(command, input=input)
         if return_code is not 0:
             logger.error("Could not run command. Error: %s", stdout)
@@ -133,6 +132,7 @@ class VirtualDesktop(BaseDesktop):
         else:
             logger.info("Launched program (pid=%d) successfully. Trying to move it to desktop %s.", pid, desktop_id)
 
+        desktop_id = desktop_id if desktop_id is not None else self.virtual_desktop_id
         return_code, stdout, _ = run_on_command_line([self.exe_path, '-GetDesktop:%s' % desktop_id, '-MoveWindow:%d' % pid])
         if return_code is 0:
             logger.info("Moved program (pid=%d) to virtual desktop %s successfully.", pid, desktop_id)
@@ -140,10 +140,9 @@ class VirtualDesktop(BaseDesktop):
         else:
             logger.error("Could not move program (pid=%d) to virtual desktop %s.", pid, desktop_id)
             return False
-        """
 
         # Instead just switch to the given desktop and pray to god it works
-
+        """
         if self.switch_to_desktop(desktop_id=desktop_id):
             return_code, stdout, pid = run_on_command_line(command, input=input)
             if return_code is not 0:
@@ -154,7 +153,7 @@ class VirtualDesktop(BaseDesktop):
                 return True
         else:
             return False
-
+        """
     def save(self, path=None):
         path = path or self.filename_vd
         with open(path, 'w') as fp:
