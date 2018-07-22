@@ -1,12 +1,13 @@
 from io import BytesIO
-import json
 import logging
 import os
 import requests
 from shutil import rmtree
+import time
 from zipfile import ZipFile
 
 from util.command_line import run_on_command_line
+from util.savers import save_dict_to_json, load_dict_from_json
 
 from desktop.base_desktop import BaseDesktop
 
@@ -120,49 +121,56 @@ class VirtualDesktop(BaseDesktop):
             logger.error("Could not remove current virtual desktop")
             return False
 
-    def launch_program(self, command, input=None, desktop_id=None):
+    def launch_program(self, command, input=None, desktop_id=None, open_async=False, sleep=None):
         """ Launches a program, with optional args, at a given desktop.
-        If desktop_id is None, should launch at the created desktop.
-        """
 
-        return_code, stdout, pid = run_on_command_line(command, input=input)
-        if return_code is not 0:
-            logger.error("Could not run command. Error: %s", stdout)
-            return False
-        else:
+        Args:
+            command::list(str)
+                The command to run. The first element in list is the
+                executable, the rest are the arguments
+            input::bytes
+                The input to be fed in as STDIN
+            desktop_id::int
+                The desktop to launch in. If None, should launch at
+                the created desktop
+            open_async::bool
+                Whether to open the process as asynchronous. If set,
+                there will not be any communication through stdin and
+                stdout, and the return code may not be set.
+            sleep::float
+                The amount of time to sleep before moving the process
+
+        Returns:
+            pid::int
+                The process id of the created process. May be None
+                if the process was not successfully launched.
+        """
+        return_code, stdout, pid = run_on_command_line(command, input=input, open_async=open_async)
+        if return_code is 0 or (return_code is None and open_async):
             logger.info("Launched program (pid=%d) successfully. Trying to move it to desktop %s.", pid, desktop_id)
+        else:
+            logger.error("Could not run command. Error: %s", stdout)
+            return None
+
+        if sleep:
+            time.sleep(sleep)
 
         desktop_id = desktop_id if desktop_id is not None else self.virtual_desktop_id
         return_code, stdout, _ = run_on_command_line([self.exe_path, '-GetDesktop:%s' % desktop_id, '-MoveWindow:%d' % pid])
-        if return_code is 0:
+        if return_code is self.virtual_desktop_id:
             logger.info("Moved program (pid=%d) to virtual desktop %s successfully.", pid, desktop_id)
-            return True
+            return pid
         else:
             logger.error("Could not move program (pid=%d) to virtual desktop %s.", pid, desktop_id)
-            return False
+            return None
 
-        # Instead just switch to the given desktop and pray to god it works
-        """
-        if self.switch_to_desktop(desktop_id=desktop_id):
-            return_code, stdout, pid = run_on_command_line(command, input=input)
-            if return_code is not 0:
-                logger.error("Could not run command. Error: %s", stdout)
-                return False
-            else:
-                logger.info("Launched program (pid=%d) successfully.", pid)
-                return True
-        else:
-            return False
-        """
     def save(self, path=None):
         path = path or self.filename_vd
-        with open(path, 'w') as fp:
-            json.dump(self.__dict__, fp)
+        save_dict_to_json(self, path)
 
     def load(self, path=None):
         path = path or self.filename_vd
-        with open(path, 'r') as fp:
-            self.__dict__.update(json.load(fp))
+        load_dict_from_json(self, path)
 
     @property
     def os(self):
