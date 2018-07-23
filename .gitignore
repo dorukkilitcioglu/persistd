@@ -105,3 +105,4 @@ venv.bak/
 
 # Program specific
 VirtualDesktop.exe
+persist-desktop/settings/local.py
