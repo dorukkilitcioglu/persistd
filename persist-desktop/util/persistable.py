@@ -16,6 +16,3 @@ class Persistable(ABC):
         should load from self.path.
         """
         pass
-
-    def set_path(self, path):
-        self.path = path

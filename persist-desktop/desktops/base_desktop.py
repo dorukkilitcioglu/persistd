@@ -5,9 +5,27 @@ from util.persistable import Persistable
 
 class BaseDesktop(Persistable, ABC):
 
-    def __init__(self, base_path, path):
-        self.base_path = base_path
-        self.path = path
+    def __init__(self, project_name, project_path, persist_path):
+        """ Initializes a desktop.
+
+        Args:
+            project_name::str
+                The name of the project
+            project_path::str
+                The path to the base directory of the project
+            persist_path::str
+                The path to the directory wherein a desktop will
+                be persisted
+        """
+        self.project_name = project_name
+        self.project_path = project_path
+        self.persist_path = persist_path
+
+    @abstractmethod
+    def setup(self):
+        """ Sets up the desktop for first use in this project.
+        """
+        pass
 
     @abstractmethod
     def create_desktop(self):

@@ -7,9 +7,10 @@ import time
 from zipfile import ZipFile
 
 from util.command_line import run_on_command_line
+from util.paths import DESKTOPS_PATH
 from util.savers import save_dict_to_json, load_dict_from_json
 
-from desktop.base_desktop import BaseDesktop
+from desktops.base_desktop import BaseDesktop
 
 logger = logging.getLogger(__name__)
 
@@ -24,21 +25,30 @@ class VirtualDesktop(BaseDesktop):
     # Path to VirtualDesktop.exe
     exe_path = None
 
-    def __init__(self, base_path, path):
-        super().__init__(base_path, path)
+    @property
+    def object_persist_path(self):
+        """ The path where this object will be persisted
+        """
+        return os.path.join(self.persist_path, 'virtual_desktop.json')
 
-        possible_exe_path = os.path.join(path, 'VirtualDesktop.exe')
+    @property
+    def os(self):
+        return ('Windows', '10')
+
+    def setup(self):
+        possible_exe_path = os.path.join(DESKTOPS_PATH, 'VirtualDesktop.exe')
         if os.path.exists(possible_exe_path):
             self.exe_path = possible_exe_path
         if not self.exe_path:
-            self._setup()
+            return self._setup()
+        return True
 
     def _setup(self):
         logger.info("Downloading VirtualDesktop from Github...")
         package_url = 'https://github.com/MScholtes/VirtualDesktop/archive/11597438e9559cbe19ef2927451129adfe6a6704.zip'
         zip_raw = requests.get(package_url)
 
-        zip_path = os.path.join(self.path, 'VirtualDesktop')
+        zip_path = os.path.join(DESKTOPS_PATH, 'VirtualDesktop')
         logger.info("Extracting VirtualDesktop contents to %s", zip_path)
         zip_bytes = BytesIO(zip_raw.content)
         zip_file = ZipFile(zip_bytes)
@@ -48,21 +58,22 @@ class VirtualDesktop(BaseDesktop):
         install_dir = os.path.join(zip_path, 'VirtualDesktop-11597438e9559cbe19ef2927451129adfe6a6704')
         cwd = os.getcwd()
         os.chdir(install_dir)
-        return_code, stdout, _ = run_on_command_line(["Compile.bat"], input='.'.encode('utf-8'))
+        return_code, stdout, _ = run_on_command_line(['Compile.bat'], input='.'.encode('utf-8'))
         os.chdir(cwd)
         if return_code is 0:
             logger.info("Successfully installed VirtualDesktop!")
         else:
-            # TODO error
             logger.error("Could not install VirtualDesktop! Error: %s", str(stdout))
+            return False
 
         logger.info("Cleaning up VirtualDesktop installation files...")
-        exe_path = os.path.join(self.path, 'VirtualDesktop.exe')
+        exe_path = os.path.join(DESKTOPS_PATH, 'VirtualDesktop.exe')
         os.rename(os.path.join(install_dir, 'VirtualDesktop.exe'), exe_path)
         rmtree(zip_path)
         self.exe_path = exe_path
 
         logger.info("VirtualDesktop is ready to go!")
+        return True
 
     def create_desktop(self):
         """ Creates a new desktop and saves the id to self
@@ -165,18 +176,9 @@ class VirtualDesktop(BaseDesktop):
             return None
 
     def save(self, path=None):
-        path = path or self.filename_vd
+        path = path or self.object_persist_path
         save_dict_to_json(self, path)
 
     def load(self, path=None):
-        path = path or self.filename_vd
+        path = path or self.object_persist_path
         load_dict_from_json(self, path)
-
-    @property
-    def os(self):
-        return ('Windows', '10')
-
-    @property
-    def filename_vd(self, path=None):
-        path = path or self.path
-        return os.path.join(self.path, 'vd.json')

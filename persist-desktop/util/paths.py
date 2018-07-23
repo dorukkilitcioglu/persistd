@@ -12,3 +12,6 @@ PERSIST_DESKTOP_PATH = _get_persist_desktop_path()
 
 # Path to the programs folder
 PROGRAMS_PATH = os.path.join(PERSIST_DESKTOP_PATH, 'programs')
+
+# Path to desktops folder
+DESKTOPS_PATH = os.path.join(PERSIST_DESKTOP_PATH, 'desktops')

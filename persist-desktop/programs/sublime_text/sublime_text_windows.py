@@ -1,10 +1,9 @@
 import logging
 import os
-from shutil import copyfile
 
 from util.command_line import run_on_command_line, kill_mutant
 from util.paths import PROGRAMS_PATH
-from util.savers import save_dict_to_json, load_dict_from_json
+from util.savers import copy_file, save_dict_to_json, load_dict_from_json
 
 from programs.base_program import BaseProgram
 import settings
@@ -46,7 +45,7 @@ class SublimeTextWindows(BaseProgram):
     def object_persist_path(self):
         """ The path where this object will be persisted
         """
-        return os.path.join(self.persist_path, 'sublime_text')
+        return os.path.join(self.persist_path, 'sublime_text.json')
 
     def _kill_mutant(self):
         kill_mutant(process_name='sublime_text.exe', object_name='Sublime')
@@ -55,8 +54,8 @@ class SublimeTextWindows(BaseProgram):
         """ Sets up the Sublime Text project
         """
         default_proj_path = os.path.join(PROGRAMS_PATH, 'sublime_text', 'default.sublime-project')
-        copyfile(default_proj_path, self.sublimeproj_path)
-        copyfile(settings.SUBLIME_TEXT_PATH, self.sublime_exe_path)
+        copy_file(default_proj_path, self.sublimeproj_path)
+        copy_file(settings.SUBLIME_TEXT_PATH, self.sublime_exe_path)
 
     def start(self):
         """ Starts a brand new instance of SublimeText
