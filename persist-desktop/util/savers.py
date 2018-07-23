@@ -10,12 +10,15 @@ def make_dirs(path):
     return True
 
 
-def save_dict_to_json(obj, path):
+def save_dict_to_json(obj, path, excluded_keys=[]):
     """ Saves the dictionary object of an object to a json file
+
+    Optionally excludes the given keys
     """
     make_dirs(path)
+    persisted_dict = {key: value for key, value in obj.__dict__.items() if key not in excluded_keys}
     with open(path, 'w') as fp:
-        json.dump(obj.__dict__, fp)
+        json.dump(persisted_dict, fp)
 
 
 def load_dict_from_json(obj, path):

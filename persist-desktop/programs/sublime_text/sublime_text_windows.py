@@ -113,7 +113,7 @@ class SublimeTextWindows(BaseProgram):
         """ Saves the variables to json
         """
         path = path or self.object_persist_path
-        save_dict_to_json(self, path)
+        save_dict_to_json(self, path, ['desktop'])
 
     def load(self, path=None):
         """ Loads variables from json
