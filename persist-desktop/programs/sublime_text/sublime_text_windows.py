@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 
 from util.command_line import run_on_command_line, kill_mutant
 from util.paths import PROGRAMS_PATH
@@ -108,6 +109,12 @@ class SublimeTextWindows(BaseProgram):
         else:
             logger.error("Could not close SublimeText window")
             return False
+
+    def destroy(self):
+        """ Destroys the file exe and the json files
+        """
+        shutil.rmtree(self.persist_path)
+        os.remove(self.sublime_exe_path)
 
     def save(self, path=None):
         """ Saves the variables to json

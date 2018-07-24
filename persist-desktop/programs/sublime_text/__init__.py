@@ -11,3 +11,7 @@ try:
     SublimeText = _implementations[platform.system()]
 except KeyError:
     SublimeText = None
+
+CODE_NAME = 'sublime_text'
+HUMAN_READABLE_NAME = 'Sublime Text'
+PROGRAM_CLASS = SublimeText

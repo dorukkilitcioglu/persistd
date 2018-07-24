@@ -47,3 +47,9 @@ class BaseProgram(Persistable, ABC):
         """ Closes the program, persisting the state
         """
         pass
+
+    @abstractmethod
+    def destroy(self):
+        """ Deletes all info regarding this program from the project
+        """
+        pass
