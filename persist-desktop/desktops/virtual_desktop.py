@@ -1,6 +1,7 @@
 from io import BytesIO
 import logging
 import os
+import platform
 import requests
 from shutil import rmtree
 import time
@@ -175,6 +176,9 @@ class VirtualDesktop(BaseDesktop):
             logger.error("Could not move program (pid=%d) to virtual desktop %s.", pid, desktop_id)
             return None
 
+    def destroy(self):
+        pass
+
     def save(self, path=None):
         path = path or self.object_persist_path
         save_dict_to_json(self, path)
@@ -182,3 +186,8 @@ class VirtualDesktop(BaseDesktop):
     def load(self, path=None):
         path = path or self.object_persist_path
         load_dict_from_json(self, path)
+
+
+CODE_NAME = 'virtual_desktop'
+HUMAN_READABLE_NAME = 'VirtualDesktop'
+DESKTOP_CLASS = VirtualDesktop if platform.system() is 'Windows' else None

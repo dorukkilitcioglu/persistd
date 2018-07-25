@@ -80,6 +80,12 @@ class BaseDesktop(Persistable, ABC):
         """
         pass
 
+    @abstractmethod
+    def destroy(self):
+        """ Deletes all info regarding this desktop from the project
+        """
+        pass
+
     @property
     @abstractmethod
     def os(self):
