@@ -70,6 +70,7 @@ class Persister(Persistable):
         self.setup()
         # Save the project
         self.save()
+        print("Project successfully initialized.")
         if ask("Do you want to open the project?"):
             self.launch_project()
 
@@ -129,21 +130,16 @@ class Persister(Persistable):
             sys.exit("Error: project with the name %s does not exist" % self.project_name)
 
     def launch_project(self):
-        # TODO actual thing
-        print('launching project')
+        """ Opens a project
         """
-        from desktops.virtual_desktop import VirtualDesktop
-        project_path = os.path.join(settings.BASE_PATH, project_name)
-        base_persist_path = os.path.join(project_path, '.persist_desktop')
-        vd_persist_path = os.path.join(base_persist_path, 'virtual_desktop')
-        vd = VirtualDesktop(project_name, project_path, vd_persist_path)
-        vd.setup()
-        vd.create_desktop()
-        from programs.sublime_text import SublimeText
-        sb_persist_path = os.path.join(base_persist_path, 'sublime_text')
-        st = SublimeText(project_name, project_path, sb_persist_path, vd)
-        return vd, st
-        """
+        if os.path.exists(self.persister_folder_path):
+            self.used_desktop_obj.create_desktop()
+            self.used_desktop_obj.switch_to_desktop()
+            for program_name, program_obj in self.used_program_objs.items():
+                program_obj.start()
+            self.save()
+        else:
+            sys.exit("Error: project with the name %s does not exist" % self.project_name)
 
     def remove_program_from_project(self, program_name):
         """ Removes a program from the project
@@ -199,6 +195,10 @@ class Persister(Persistable):
         """
         path = path or self.persister_obj_path
         save_dict_to_json(self, path, ['used_desktop_obj', 'used_program_objs'])
+        if self.used_desktop:
+            self.used_desktop_obj.save()
+        for program_name, program_obj in self.used_program_objs.items():
+            program_obj.save()
 
     def load(self, path=None):
         """ Loads variables from json
@@ -206,9 +206,12 @@ class Persister(Persistable):
         path = path or self.persister_obj_path
         load_dict_from_json(self, path)
         if self.used_desktop:
-            self._initialize_desktop_obj
-
+            self._initialize_desktop_obj()
         self._initialize_program_objects()
+        if self.used_desktop:
+            self.used_desktop_obj.load()
+        for program_name, program_obj in self.used_program_objs.items():
+            program_obj.load()
 
 
 def ask(question):
