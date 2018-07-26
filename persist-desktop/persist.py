@@ -148,7 +148,17 @@ class Persister(Persistable):
     def remove_program_from_project(self, program_name):
         """ Removes a program from the project
         """
-        pass
+        if os.path.exists(self.persister_folder_path):
+            if program_name in self.used_programs:
+                self.used_programs.remove(program_name)
+                program = self.used_program_objs[program_name]
+                program.destroy()
+                self.save()
+                print('Program successfully deleted from %s' % self.project_name)
+            else:
+                sys.exit("The program with codename %s is not being used." % program_name)
+        else:
+            sys.exit("Error: project with the name %s does not exist" % self.project_name)
 
     def close_project(self, project_name):
         # TODO actual thing
@@ -230,6 +240,6 @@ if __name__ == '__main__':
     elif args.add:
         persister.add_program_to_project(args.add)
     elif args.remove:
-        persister.remove_program_from_project(args.add)
+        persister.remove_program_from_project(args.remove)
     else:
         persister.launch_project()
