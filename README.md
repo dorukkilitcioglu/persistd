@@ -37,5 +37,8 @@ Look at the [issues](https://github.com/dorukkilitcioglu/persist-desktop/issues)
 
 If you see any bugs, or have suggestions, feel free to open up an issue or comment on an existing one. I'm probably not going to accept any pull requests until the first milestone, because the project structure is not yet fixed.
 
+## License
+See [LICENSE](LICENSE) for details, but its GPL3. If you build something amazing on top of this, its great, just make sure that its source code is also available under GPL3.
+
 ## Author
 **[Doruk Kilitcioglu](https://dorukkilitcioglu.github.io/)**
