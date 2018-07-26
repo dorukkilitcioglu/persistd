@@ -1,6 +1,8 @@
+import programs.conemu as conemu
 import programs.sublime_text as sublime_text
 
 all_programs = [sublime_text,
+                conemu,
                 ]
 
 code_name_to_class = {program.CODE_NAME: program.PROGRAM_CLASS

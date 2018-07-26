@@ -2,12 +2,12 @@ import logging
 import os
 import shutil
 
+import settings
 from util.command_line import run_on_command_line, kill_mutant
 from util.paths import PROGRAMS_PATH
 from util.savers import copy_file, save_dict_to_json, load_dict_from_json
 
 from programs.base_program import BaseProgram
-import settings
 
 logger = logging.getLogger(__name__)
 
