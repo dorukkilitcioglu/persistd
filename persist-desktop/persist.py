@@ -85,7 +85,9 @@ class Persister(Persistable):
         """
         Program = programs.code_name_to_class[program_name]
         persist_path = os.path.join(self.persister_folder_path, program_name)
-        self.used_program_objs[program_name] = Program(self.project_name, self.project_path, persist_path, self.used_desktop_obj)
+        program = Program(self.project_name, self.project_path, persist_path, self.used_desktop_obj)
+        self.used_program_objs[program_name] = program
+        return program
 
     def _initialize_program_objects(self):
         for program_name in self.used_programs:
@@ -108,7 +110,25 @@ class Persister(Persistable):
             os.makedirs(self.persister_folder_path)
             return self._initialize_project()
 
-    def launch_project(self, project_name):
+    def add_program_to_project(self, program_name):
+        """ Adds a program to the project
+        """
+        if os.path.exists(self.persister_folder_path):
+            if program_name in [program.CODE_NAME for program in programs.all_programs]:
+                if program_name in self.used_programs:
+                    print('Program is already being used')
+                else:
+                    self.used_programs.append(program_name)
+                    program = self._initialize_program_obj(program_name)
+                    program.setup()
+                    self.save()
+                    print('Program successfully added to %s' % self.project_name)
+            else:
+                sys.exit("No program with codename %s is available." % program_name)
+        else:
+            sys.exit("Error: project with the name %s does not exist" % self.project_name)
+
+    def launch_project(self):
         # TODO actual thing
         print('launching project')
         """
@@ -124,6 +144,11 @@ class Persister(Persistable):
         st = SublimeText(project_name, project_path, sb_persist_path, vd)
         return vd, st
         """
+
+    def remove_program_from_project(self, program_name):
+        """ Removes a program from the project
+        """
+        pass
 
     def close_project(self, project_name):
         # TODO actual thing
@@ -186,6 +211,8 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--new', action='store_true', help="create a new project with the given name")
     parser.add_argument('-c', '--close', action='store_true', help="close & persist the project with the given name")
     parser.add_argument('-d', '--delete', action='store_true', help="delete a project")
+    parser.add_argument('-a', '--add', help="add a new program to the project")
+    parser.add_argument('-r', '--remove', help="remove a program from the project")
     parser.add_argument('project_name')
     args = parser.parse_args()
 
@@ -200,5 +227,9 @@ if __name__ == '__main__':
             persister.delete_project()
         else:
             print("Project not deleted.")
+    elif args.add:
+        persister.add_program_to_project(args.add)
+    elif args.remove:
+        persister.remove_program_from_project(args.add)
     else:
         persister.launch_project()
