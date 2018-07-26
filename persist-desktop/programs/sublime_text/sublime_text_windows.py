@@ -64,7 +64,7 @@ class SublimeTextWindows(BaseProgram):
         # TODO make this more deterministic
         # It seems like you need some waiting before switching sublimetext
         # So just sleep for 2 secs
-        pid = self.desktop.launch_program([self.sublime_exe_path, self.project_path, "--project", self.sublimeproj_path], open_async=True, sleep=2)
+        pid = self.desktop.launch_program([self.sublime_exe_path, self.project_path, "--project", self.sublimeproj_path], open_async=True)
         if pid is not None:
             logger.info("Started SublimeText on path %s", self.project_path)
             self.sublime_pid = pid

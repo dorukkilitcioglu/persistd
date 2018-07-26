@@ -133,7 +133,41 @@ class VirtualDesktop(BaseDesktop):
             logger.error("Could not remove current virtual desktop")
             return False
 
-    def launch_program(self, command, input=None, desktop_id=None, open_async=False, sleep=None):
+    def move_program(self, pid, desktop_id=None, max_tries=3, sleep=None):
+        """ Moves a program to a given desktop using its process id.
+
+        Args:
+            pid::int
+                The process id
+            desktop_id::int
+                The desktop to launch in. If None, should launch at
+                the created desktop
+            max_tries::int
+                The max # of times this action should be tried
+            sleep::float
+                The amount of time to sleep before moving the process
+
+        Returns:
+            pid::int
+                The process id of the created process. May be None
+                if the process was not successfully launched.
+        """
+        desktop_id = desktop_id if desktop_id is not None else self.virtual_desktop_id
+        return_code = -1
+        counter = 0
+        while return_code != self.virtual_desktop_id and counter < max_tries:
+            return_code, stdout, _ = run_on_command_line([self.exe_path, '-GetDesktop:%s' % desktop_id, '-MoveWindow:%d' % pid])
+            if return_code is self.virtual_desktop_id:
+                logger.info("Moved program (pid=%d) to virtual desktop %s successfully.", pid, desktop_id)
+                return pid
+            else:
+                counter += 1
+            if sleep:
+                time.sleep(sleep)
+        logger.error("Could not move program (pid=%d) to virtual desktop %s.", pid, desktop_id)
+        return None
+
+    def launch_program(self, command, input=None, desktop_id=None, open_async=False, max_tries=3, sleep=None):
         """ Launches a program, with optional args, at a given desktop.
 
         Args:
@@ -149,6 +183,8 @@ class VirtualDesktop(BaseDesktop):
                 Whether to open the process as asynchronous. If set,
                 there will not be any communication through stdin and
                 stdout, and the return code may not be set.
+            max_tries::int
+                The # of times moving the program should be tried.
             sleep::float
                 The amount of time to sleep before moving the process
 
@@ -167,14 +203,7 @@ class VirtualDesktop(BaseDesktop):
         if sleep:
             time.sleep(sleep)
 
-        desktop_id = desktop_id if desktop_id is not None else self.virtual_desktop_id
-        return_code, stdout, _ = run_on_command_line([self.exe_path, '-GetDesktop:%s' % desktop_id, '-MoveWindow:%d' % pid])
-        if return_code is self.virtual_desktop_id:
-            logger.info("Moved program (pid=%d) to virtual desktop %s successfully.", pid, desktop_id)
-            return pid
-        else:
-            logger.error("Could not move program (pid=%d) to virtual desktop %s.", pid, desktop_id)
-            return None
+        return self.move_program(pid, desktop_id, max_tries, sleep)
 
     def destroy(self):
         pass
