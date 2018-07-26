@@ -91,6 +91,8 @@ class Persister(Persistable):
         return program
 
     def _initialize_program_objects(self):
+        """ Initializes multiple program objects
+        """
         for program_name in self.used_programs:
             self._initialize_program_obj(program_name)
 
@@ -156,9 +158,16 @@ class Persister(Persistable):
         else:
             sys.exit("Error: project with the name %s does not exist" % self.project_name)
 
-    def close_project(self, project_name):
-        # TODO actual thing
-        print("ccc")
+    def close_project(self):
+        """ Closes a project
+        """
+        if os.path.exists(self.persister_folder_path):
+            for program_name, program_obj in self.used_program_objs.items():
+                program_obj.close()
+            self.used_desktop_obj.close_desktop()
+            self.save()
+        else:
+            sys.exit("Error: project with the name %s does not exist" % self.project_name)
 
     def delete_project(self):
         """ Deletes a project, given user input
@@ -180,11 +189,15 @@ class Persister(Persistable):
             print("Project not deleted.")
 
     def setup(self):
+        """ Sets up the desktop and all the programs
+        """
         self.used_desktop_obj.setup()
         for used_program_key, used_program in self.used_program_objs.items():
             used_program.setup()
 
     def destroy(self):
+        """ Destroys the desktop and all the programs
+        """
         for used_program_key, used_program in self.used_program_objs.items():
             used_program.destroy()
         if self.used_desktop_obj:
@@ -215,6 +228,8 @@ class Persister(Persistable):
 
 
 def ask(question):
+    """ Asks a yes/no question
+    """
     ans = input(question)
     return ans is "y" or ans is "Y"
 
