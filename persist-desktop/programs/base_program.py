@@ -32,13 +32,7 @@ class BaseProgram(Persistable, ABC):
 
     @abstractmethod
     def start(self):
-        """ Starts a brand new instance of this program
-        """
-        pass
-
-    @abstractmethod
-    def restart(self):
-        """ Restarts the program from where it was left
+        """ Starts a new instance of this program
         """
         pass
 

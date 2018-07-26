@@ -73,11 +73,6 @@ class SublimeTextWindows(BaseProgram):
             logger.error("Could not start SublimeText on path %s", self.project_path)
             return False
 
-    def restart(self):
-        """ Restarts SublimeText from where it was left.
-        """
-        return self.start()
-
     def close(self):
         """ Closes the program, persisting the state
 
