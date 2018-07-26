@@ -1,17 +1,12 @@
 {
-	"build_systems":
-	[
-		{
-			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
-			"name": "Anaconda Python Builder",
-			"selector": "source.python",
-			"shell_cmd": "\"python\" -u \"$file\""
-		}
-	],
-	"folders":
-	[
-		{
-			"path": "C:\\Users\\doruk\\Desktop\\Playground\\persist-desktop\\persist-desktop"
-		}
-	]
+    "folders": [
+        {
+            "path": "../../",
+            "folder_exclude_patterns": [".persist-desktop"]
+
+        }
+    ],
+    "settings": {
+        "remember_open_files": true,
+    },
 }
