@@ -19,7 +19,9 @@ as per the [instructions](https://conda.io/docs/using/envs.html#create-an-enviro
 
 ## Usage
 
-TODO: There will be instructions to run it using a CLI soon. Right now it doesn't even have a CLI.
+TODO: There will be instructions to run it using a CLI soon. Right now, you can use `python persist.py -h` to see the options.
+
+There is a _very_ good chance that this requires administrator access, so try using that if you get an error.
 
 ### Programs
 
