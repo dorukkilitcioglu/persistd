@@ -103,6 +103,13 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-# Program specific
+#### Program specific
+
+# Virtual Desktop exe gets placed into this dir
 VirtualDesktop.exe
+
+# Local settings
 persist-desktop/settings/local.py
+
+# The persist-desktop object for this repo
+.persist-desktop
