@@ -60,7 +60,7 @@ function saveTabsAndClose(tabs) {
 // and then calls saveTabsAndClose()
 function getSavedWindow(project) {
     project = project[projectName];
-    if("windowId" in project) {
+    if(project && project.windowId != undefined) {
         savedWindowId = project.windowId;
         chrome.tabs.query({windowId: savedWindowId}, saveTabsAndClose);
     } else {
