@@ -184,7 +184,8 @@ class VirtualDesktop(BaseDesktop):
                 there will not be any communication through stdin and
                 stdout, and the return code may not be set.
             max_tries::int
-                The # of times moving the program should be tried.
+                The # of times moving the program should be tried. If 0,
+                it won't be tried to move.
             sleep::float
                 The amount of time to sleep before moving the process
 
@@ -203,7 +204,10 @@ class VirtualDesktop(BaseDesktop):
         if sleep:
             time.sleep(sleep)
 
-        return self.move_program(pid, desktop_id, max_tries, sleep)
+        if max_tries > 0:
+            return self.move_program(pid, desktop_id, max_tries, sleep)
+        else:
+            return pid
 
     def destroy(self):
         pass

@@ -10,11 +10,10 @@ from programs.base_program import BaseProgram
 
 logger = logging.getLogger(__name__)
 
+BASE_URL = "http://idontthinkthis.domainwilleverexist?project_name=%s&action=%s"
+
 
 class Chrome(BaseProgram):
-
-    # The process id of Chrome window instance
-    chrome_pid = None
 
     @property
     def object_persist_path(self):
@@ -27,13 +26,15 @@ class Chrome(BaseProgram):
         """
         pass
 
+    def get_url(self, action):
+        return BASE_URL % (self.project_name, action)
+
     def start(self):
         """ Starts a new instance of this program
         """
-        pid = self.desktop.launch_program([settings.CHROME_PATH, "--new-window"], open_async=True, sleep=2)
+        pid = self.desktop.launch_program([settings.CHROME_PATH, "--new-window", self.get_url('start')], open_async=True, sleep=2, max_tries=0)
         if pid is not None:
             logger.info("Started Chrome.")
-            self.chrome_pid = pid
             return True
         else:
             logger.error("Could not start Chrome.")
@@ -42,10 +43,9 @@ class Chrome(BaseProgram):
     def close(self):
         """ Closes the program, persisting the state
         """
-        return_code, _, _ = run_on_command_line(["taskkill", "-pid", str(self.chrome_pid)])
+        return_code, _, _ = run_on_command_line([settings.CHROME_PATH, "--new-window", self.get_url('close')])
         if return_code is 0:
             logger.info("Closed Chrome window")
-            self.conemu_pid = None
             return True
         else:
             logger.error("Could not close Chrome window")
@@ -55,6 +55,13 @@ class Chrome(BaseProgram):
         """ Deletes all info regarding this program from the project
         """
         shutil.rmtree(self.persist_path)
+        return_code, _, _ = run_on_command_line([settings.CHROME_PATH, "--new-window", self.get_url('destroy')])
+        if return_code is 0:
+            logger.info("Destroyed Chrome storage for this project")
+            return True
+        else:
+            logger.error("Could not destroy Chrome storage for this project")
+            return False
 
     def save(self, path=None):
         """ Saves the variables to json
