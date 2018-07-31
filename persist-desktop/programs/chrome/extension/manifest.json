@@ -1,0 +1,16 @@
+{
+    "name": "Persist Desktop Helper",
+    "version": "1.0.0",
+    "description": "Chrome extension to persist your Chrome sessions. See https://github.com/dorukkilitcioglu/persist-desktop",
+    "manifest_version": 2,
+    "background": {
+        "scripts": ["background.js"]
+    },
+    "permissions": [
+        "webRequest",
+        "webRequestBlocking",
+        "storage",
+        "tabs",
+        "*://idontthinkthis.domainwilleverexist/*"
+    ]
+}
