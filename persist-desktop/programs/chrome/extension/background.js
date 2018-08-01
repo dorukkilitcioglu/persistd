@@ -64,6 +64,7 @@ function getSavedWindow(project) {
         savedWindowId = project.windowId;
         chrome.tabs.query({windowId: savedWindowId}, saveTabsAndClose);
     } else {
+        chrome.tabs.remove(tabId, function() { console.log('Removed triggering tab'); });
         console.log("Can't find any window id for this project");
     }
 }
