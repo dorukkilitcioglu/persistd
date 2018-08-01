@@ -103,6 +103,15 @@ class Persister(Persistable):
         """ Creates a new project. See _initialize_project for how to
         initialize a project.
         """
+        warnings = ("\nWARNING:\n"
+                    "Before creating a project, make sure that you have followed the install instructions.\n"
+                    "They can be found at: https://github.com/dorukkilitcioglu/persist-desktop#getting-started\n"
+                    "Specifically, make sure you edit the settings to have BASE_PATH pointing to a folder\n"
+                    "and the program paths pointing to their relevant executables\n"
+                    "If any operation files due to permissions, make sure you run the script with admin rights.\n"
+                    )
+        print(warnings)
+
         if os.path.exists(self.project_path):
             # Path exists, see if a persist desktop project has been initialized there
             if os.path.exists(self.persister_folder_path):

@@ -54,6 +54,11 @@ class SublimeTextWindows(BaseProgram):
     def setup(self):
         """ Sets up the Sublime Text project
         """
+        warnings = ("\nWARNING:\n"
+                    "Before running the project, make sure you configure Sublime Text correctly\n"
+                    "The instructions can be found at: https://github.com/dorukkilitcioglu/persist-desktop#sublimetext-windows\n"
+                    )
+        print(warnings)
         default_proj_path = os.path.join(PROGRAMS_PATH, 'sublime_text', 'default.sublime-project')
         copy_file(default_proj_path, self.sublimeproj_path)
         copy_file(settings.SUBLIME_TEXT_PATH, self.sublime_exe_path)

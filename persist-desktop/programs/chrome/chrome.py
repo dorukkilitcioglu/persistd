@@ -24,7 +24,11 @@ class Chrome(BaseProgram):
     def setup(self):
         """ Sets up the program for first use in this project.
         """
-        pass
+        warnings = ("\nWARNING:\n"
+                    "Before running the project, make sure you install the Chrome extension\n"
+                    "The instructions can be found at: https://github.com/dorukkilitcioglu/persist-desktop#getting-started\n"
+                    )
+        print(warnings)
 
     def get_url(self, action):
         return BASE_URL % (self.project_name, action)
