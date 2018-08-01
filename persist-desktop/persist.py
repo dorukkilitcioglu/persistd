@@ -8,6 +8,7 @@ import sys
 import desktops
 import programs
 import settings
+from util.command_line import askyn
 from util.persistable import Persistable
 from util.savers import save_dict_to_json, load_dict_from_json
 
@@ -64,7 +65,7 @@ class Persister(Persistable):
         # Initialize the programs
         print("Please say y if you want to use a program, n if you don't")
         for program in programs.all_programs:
-            if ask(program.HUMAN_READABLE_NAME):
+            if askyn(program.HUMAN_READABLE_NAME):
                 self.used_programs.append(program.CODE_NAME)
 
         self._initialize_program_objects()
@@ -73,7 +74,7 @@ class Persister(Persistable):
         # Save the project
         self.save()
         print("Project successfully initialized.")
-        if ask("Do you want to open the project?"):
+        if askyn("Do you want to open the project?"):
             self.launch_project()
 
     def _initialize_desktop_obj(self):
@@ -107,7 +108,7 @@ class Persister(Persistable):
             if os.path.exists(self.persister_folder_path):
                 # Project has been initialized before
                 sys.exit("Error: project with the name %s already exists" % self.project_name)
-            elif ask("Folder %s already exists, do you want to turn it into a persist-desktop project?" % self.project_name):
+            elif askyn("Folder %s already exists, do you want to turn it into a persist-desktop project?" % self.project_name):
                 return self._initialize_project()
             else:
                 sys.exit("I don't think you really want to create this project...")
@@ -176,12 +177,12 @@ class Persister(Persistable):
         """
         if not os.path.exists(self.project_path):
             sys.exit("Error: project with the name %s does not exist" % self.project_name)
-        elif os.path.exists(self.persister_folder_path) and ask("Do you want to keep the project files?"):
+        elif os.path.exists(self.persister_folder_path) and askyn("Do you want to keep the project files?"):
             # only delete persist-desktop files
             self.destroy()
             shutil.rmtree(self.persister_folder_path)
             print("Deleted project files.")
-        elif ask("Are you sure you want to delete all files? This action cannot be undone!"):
+        elif askyn("Are you sure you want to delete all files? This action cannot be undone!"):
             # delete all files
             self.destroy()
             shutil.rmtree(self.project_path)
@@ -229,13 +230,6 @@ class Persister(Persistable):
             program_obj.load()
 
 
-def ask(question):
-    """ Asks a yes/no question
-    """
-    ans = input(question)
-    return ans is "y" or ans is "Y"
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Persist your desktop.")
     parser.add_argument('-n', '--new', action='store_true', help="create a new project with the given name")
@@ -253,7 +247,7 @@ if __name__ == '__main__':
     elif args.close:
         persister.close_project()
     elif args.delete:
-        if ask("Deleting a project cannot be undone. Are you sure you want to delete %s?" % args.project_name):
+        if askyn("Deleting a project cannot be undone. Are you sure you want to delete %s?" % args.project_name):
             persister.delete_project()
         else:
             print("Project not deleted.")

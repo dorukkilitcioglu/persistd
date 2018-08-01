@@ -56,3 +56,10 @@ def kill_mutant(process_name, object_name):
 
     # Return true if there wasn't any errors
     return return_code == 0
+
+
+def askyn(question, suffix=' (y/n): '):
+    """ Asks a yes/no question
+    """
+    ans = input(question + suffix)
+    return ans is "y" or ans is "Y"
