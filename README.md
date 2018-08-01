@@ -68,6 +68,18 @@ python persist.py -c <project_name>
 ```
 I'd advise against manually closing any of the programs, because their states are only persisted when closing. Right now, the only program that is really affected by this is Chrome, though that might change in the future.
 
+If you're done with a project, you can delete it using
+```
+python persist.py -d <project_name>
+```
+This will ask you multiple times if you **really** want to delete that project. You can optionally delete only the persist-desktop files from the project.
+
+The two additional options are `-a` and `-r`, which adds or removes a program with the given name. For example, you can remove ConEmu from a project using
+```
+python persist.py <project_name> -r conemu
+```
+The supported program names are `conemu`, `chrome`, and `sublime_text`.
+
 ### Programs
 
 #### SublimeText (Windows)
