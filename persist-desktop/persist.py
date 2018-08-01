@@ -54,11 +54,16 @@ class Persister(Persistable):
 
     def _initialize_project(self):
         # Initialize a desktop
+        if len(desktops.all_desktops) == 0:
+            sys.exit("Can't find any desktops for your OS. Contact the developer.")
         print('Available desktops are:')
         for i, desktop in enumerate(desktops.all_desktops):
             print("%d. %s" % (i + 1, desktop.HUMAN_READABLE_NAME))
-        desktop_index = int(input('Please select the desktop you want to use:')) - 1
-        desktop = desktops.all_desktops[desktop_index]
+        desktop_index = int(input('Please select the desktop you want to use: ')) - 1
+        try:
+            desktop = desktops.all_desktops[desktop_index]
+        except IndexError:
+            sys.exit('Please select a valid desktop!')
         self.used_desktop = desktop.CODE_NAME
         self._initialize_desktop_obj()
 
