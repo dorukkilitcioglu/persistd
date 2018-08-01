@@ -1,11 +1,19 @@
 # persist-desktop
-Persist-desktop allows you to persist your virtual desktop over multiple reboots. Automatically open all your relevant programs, and close them when you're done for the day.
+Persist-desktop is a program made for multi-tasking developers. It allows you to persist your virtual desktop over multiple reboots. Automatically open all your relevant programs, and close them when you're done for the day. Never fear the Windows updates again.
 
 ## Getting Started
 
 The development will be done using Python 3.7, and I won't be supporting Python 2.x. It's 2018. Come on.
 
-### Prerequisites
+### Installation
+
+The requirements and how to install them are specified [below](#requirements). Right now, there is no `setup.py` to install this program. That will come in later, as well as PyPI support. For now, just download this repo to a directory and (for ease of use) make sure your `path` includes the `persist-desktop` directory, so you can call `persist.py` directly.
+
+Once downloaded, you can and **should** modify [default settings](persist-desktop/settings/default.py) to point to your program executables. At minimum, you **must** modify the `BASE_PATH`, which will be the main directory that will contain all your projects. If you don't like to move your existing projects, you can simply symlink them to the directory given by `BASE_PATH`.
+
+Some of the other options in [default settings](persist-desktop/settings/default.py) are already set to the common install locations of the programs. They can be changed at will. The preferred method is to create a `local.py` with the same variables at the same directory, which will take precedence over `default.py`. This should make sure your updates are easy.
+
+### Requirements
 
 The dependencies are listed on **requirements.txt**. The list is _very_ short, so you should be able to install it in your base Python installation and not as part of a virtual environment. You can install the dependencies by running
 ```
@@ -19,15 +27,77 @@ as per the [instructions](https://conda.io/docs/using/envs.html#create-an-enviro
 
 ## Usage
 
-TODO: There will be instructions to run it using a CLI soon. Right now, you can use `python persist.py -h` to see the options.
+There is a _very_ good chance that this program requires administrator access, so try doing that if you get an error in any of the steps below.
 
-There is a _very_ good chance that this requires administrator access, so try using that if you get an error.
+Right now, the only way to interact with the program is through a command line interface. You can use `python persist.py -h` to see the options, which will give you something like this:
+
+```
+# python persist.py -h
+usage: persist.py [-h] [-n] [-c] [-d] [-a ADD] [-r REMOVE] project_name
+
+Persist your desktop.
+
+positional arguments:
+  project_name
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -n, --new             create a new project with the given name
+  -c, --close           close & persist the project with the given name
+  -d, --delete          delete a project
+  -a ADD, --add ADD     add a new program to the project
+  -r REMOVE, --remove REMOVE
+                        remove a program from the project
+```
+
+In general, you can create a new project using
+```
+python persist.py -n <project_name>
+```
+which will prompt you to first select a desktop manager, and then ask you about the programs you want to use. See [below](#programs) for specific information about the different programs.
+
+Once a project is created, you can launch that project using
+```
+python persist.py <project_name>
+```
+which should create a new desktop and open up any programs you have selected while setting up.
+
+Once you're done with a project, you can close all relevant programs & the desktop using
+```
+python persist.py -c <project_name>
+```
+I'd advise against manually closing any of the programs, because their states are only persisted when closing. Right now, the only program that is really affected by this is Chrome, though that might change in the future.
 
 ### Programs
 
 #### SublimeText (Windows)
 
-In order to use SublimeText, you need to make sure that you [disable auto-reloading of the last session](https://forum.sublimetext.com/t/disable-automatic-loading-of-last-session/4132/15). Right now, the only way around this seems to be using a portable SublimeText.
+In order to use SublimeText, you need to make sure that you [disable auto-reloading of the last session](https://forum.sublimetext.com/t/disable-automatic-loading-of-last-session/4132/15). Right now, the only way around this seems to be using a portable SublimeText. For those of you lazy people out there, here are the steps:
+1. Go to Menu Bar > Preference > Settings (User).
+2. Add the following lines to the JSON:
+   ```
+   {
+     "hot_exit": false,
+     "remember_open_files": false
+   }
+   ```
+
+3. ???
+4. Profit
+
+There is also a caveat with the current implementation, where if you use the regular `subl` executable to open a file outside of this program, **that Sublime Text window will be replicated when you launch a project**. This is highly sub-optimal, but thats how it is for now.
+
+#### Chrome (Windows)
+
+In order to use Chrome, you first need to install the relevant [extension](persist-desktop/programs/chrome/extension). You can find the steps to install the unpacked extension [here](https://stackoverflow.com/questions/24577024/install-chrome-extension-not-in-the-store). Make sure you point Chrome to the [extension folder](persist-desktop/programs/chrome/extension).
+
+I will make sure to actually release it to Chrome Extension Store (or whatever that's called) after a while.
+
+#### ConEmu (Windows)
+
+ConEmu is a good program. It is easy to work with. It doesn't have any problems because ConEmu is a good boy. We should all strive to be ConEmu.
+
+Seriously though, the only thing you have to do is to create your own [startfile](https://conemu.github.io/en/ConEmuArgs.html#Sample-file-or-task). The included one defaults to a single `cmd` window. After creating the project, modify the default startfile at `<project_path>/.persist-desktop/conemu/<project_name>_startfile.txt`. The next time you launch, ConEmu will use those settings.
 
 ## Future Plans
 
