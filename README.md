@@ -1,5 +1,5 @@
 # persist-desktop
-Persist-desktop is a program made for multi-tasking developers. It allows you to persist your virtual desktop over multiple reboots. Automatically open all your relevant programs, and close them when you're done for the day. Never fear the Windows updates again.
+Persist-desktop is a workspace/workflow manager made for multi-tasking developers. It allows you to persist your virtual desktop over multiple reboots. Automatically open all your relevant programs, and close them when you're done for the day. Never fear the Windows updates again.
 
 ## Getting Started
 
