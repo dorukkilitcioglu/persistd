@@ -268,8 +268,17 @@ def main():
 
     # First, take care of options that don't need the project_name
     if args.list_projects:
-        for i, project in enumerate(get_all_projects(), start=1):
+        all_projects = get_all_projects()
+        for i, project in enumerate(all_projects, start=1):
             print('{0:d}. {1:s}'.format(i, project))
+        ind = int(input('Please enter the index of the project you want to launch, or 0 to exit: ')) - 1
+        if ind > -1 and ind < len(all_projects):
+            project_name = all_projects[ind]
+            print('Launching %s' % project_name)
+            persister = Persister(settings.BASE_PATH, project_name)
+            persister.launch_project()
+        elif ind != -1:
+            sys.exit('The specified index is not valid.')
     # Then, check if project_name is set
     elif args.project_name and args.project_name != DEFAULT_PROJECT:
         if args.new:
