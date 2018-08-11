@@ -268,8 +268,8 @@ def main():
 
     # First, take care of options that don't need the project_name
     if args.list_projects:
-        for project in get_all_projects():
-            print(project)
+        for i, project in enumerate(get_all_projects(), start=1):
+            print('{0:d}. {1:s}'.format(i, project))
     # Then, check if project_name is set
     elif args.project_name and args.project_name != DEFAULT_PROJECT:
         if args.new:
