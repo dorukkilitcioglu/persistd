@@ -117,7 +117,7 @@ Look at the [issues](https://github.com/dorukkilitcioglu/persist-desktop/issues)
 
 ## Contributing
 
-If you see any bugs, or have suggestions, feel free to open up an issue or comment on an existing one. I'm probably not going to accept any pull requests until the first milestone, because the project structure is not yet fixed.
+If you see any bugs, or have suggestions, feel free to open up an issue or comment on an existing one. Since we reached the first milestone, I'm more willing to accept pull requests, but make sure that you roughly follow the coding conventions in the files already included in the repo.
 
 ## License
 See [LICENSE](LICENSE) for details, but its GPL3. If you build something amazing on top of this, its great, just make sure that its source code is also available under GPL3.
