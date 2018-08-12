@@ -33,7 +33,8 @@ Right now, the only way to interact with the program is through a command line i
 
 ```
 # python persist.py -h
-usage: persist.py [-h] [-n] [-c] [-d] [-a ADD] [-r REMOVE] project_name
+usage: persist.py [-h] [-i] [-n] [-o] [-c] [-d] [-a ADD] [-r REMOVE] [-l]
+                  [project_name]
 
 Persist your desktop.
 
@@ -42,15 +43,25 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -n, --new             create a new project with the given name
-  -c, --close           close & persist the project with the given name
+  -i, --interactive     start interactive mode
+  -n, --new             create a new project
+  -o, --open            open a project
+  -c, --close           close & persist the project
   -d, --delete          delete a project
   -a ADD, --add ADD     add a new program to the project
   -r REMOVE, --remove REMOVE
                         remove a program from the project
+  -l, --list-projects   list all projects under the base path
 ```
 
-In general, you can create a new project using
+In general, you can run the interactive mode using
+```
+python persist.py -i
+```
+which should give you a human readable interface to interact with the program. I personally have a shortcut that calls `persist.py` with this argument, so I don't have to open up a terminal each time I want to open/close a project.
+
+
+If you want to go in depth with the terminal options, you can create a new project using
 ```
 python persist.py -n <project_name>
 ```
