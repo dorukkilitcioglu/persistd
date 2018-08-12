@@ -4,6 +4,7 @@ import argparse
 import os
 import sys
 
+import programs
 import settings
 from util.command_line import askyn
 from util.persister import Persister
@@ -35,6 +36,8 @@ ARG_PROJECT_NAME = 'project_name'
 
 
 def get_action():
+    """ Cooses an action or exits
+    """
     print('Available actions:')
     actions = [
         "List all projects under the base path",
@@ -59,6 +62,8 @@ def get_action():
 
 
 def get_project():
+    """ Chooses a project or exits
+    """
     print('Available projects:')
     all_projects = get_all_projects()
     for i, project in enumerate(all_projects, start=1):
@@ -73,10 +78,23 @@ def get_project():
 
 
 def get_program():
-    pass
+    """ Chooses a program or exits
+    """
+    print('Available programs:')
+    for i, program in enumerate(programs.all_programs, start=1):
+        print('{0:d}. {1:s}'.format(i, program.HUMAN_READABLE_NAME))
+    ind = int(input('Please enter the index of the program you want to modify, or 0 to exit: ')) - 1
+    if ind > -1 and ind < len(programs.all_programs):
+        return programs.all_programs[ind].CODE_NAME
+    elif ind == -1:
+        sys.exit(0)
+    else:
+        sys.exit('The specified index is not valid.')
 
 
 def interactive():
+    """ Chooses an action, and if necessary, a project and a program
+    """
     args = []
     action = get_action()
     args.append('--' + action)
