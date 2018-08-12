@@ -7,16 +7,12 @@ import sys
 import programs
 import settings
 from util.command_line import askyn
-from util.persister import Persister
+from util.persister import DEFAULT_PROJECT_NAME, Persister
 
 
 def get_all_projects(base_path = settings.BASE_PATH):
     return [d for d in next(os.walk(base_path))[1] if not d.startswith('.')]
 
-
-# this should never be the name of a project
-# if it is, shame on you
-DEFAULT_PROJECT = '|||||||'
 
 ACTION_LIST_PROJECTS = 'list-projects'
 ACTION_NEW = 'new'
@@ -29,10 +25,9 @@ ACTION_INTERACTIVE = 'interactive'
 ALL_ACTIONS = [ACTION_LIST_PROJECTS, ACTION_NEW, ACTION_OPEN, ACTION_CLOSE, ACTION_DELETE,
                ACTION_ADD, ACTION_REMOVE, ACTION_INTERACTIVE]
 # actions that operate on a project
-PROJECT_ACTIONS = [ACTION_NEW, ACTION_OPEN, ACTION_CLOSE, ACTION_DELETE, ACTION_ADD, ACTION_REMOVE]
+PROJECT_ACTIONS = [ACTION_OPEN, ACTION_CLOSE, ACTION_DELETE, ACTION_ADD, ACTION_REMOVE]
 # actions that operate on programs
 PROGRAM_ACTIONS = [ACTION_ADD, ACTION_REMOVE]
-ARG_PROJECT_NAME = 'project_name'
 
 
 def get_action():
@@ -120,11 +115,11 @@ def main(args):
         print('Launching %s' % project_name)
         persister = Persister(settings.BASE_PATH, project_name)
         persister.launch_project()
+    elif args.new:
+        persister.create_project()
     # Then, check if project_name is set
-    elif args.project_name and args.project_name != DEFAULT_PROJECT:
-        if args.new:
-            persister.create_project()
-        elif args.close:
+    elif args.project_name and args.project_name != DEFAULT_PROJECT_NAME:
+        if args.close:
             persister.close_project()
         elif args.delete:
             if askyn("Deleting a project cannot be undone. Are you sure you want to delete %s?" % args.project_name):
@@ -156,7 +151,7 @@ def parse_args(args):
     parser.add_argument('-a', '--add', help="add a new program to the project")
     parser.add_argument('-r', '--remove', help="remove a program from the project")
     parser.add_argument('-l', '--list-projects', action='store_true', help="list all projects under the base path")
-    parser.add_argument('project_name', nargs='?', default=DEFAULT_PROJECT)
+    parser.add_argument('project_name', nargs='?', default=DEFAULT_PROJECT_NAME)
     parsed_args = parser.parse_args(args)
     parsed_args.parser = parser
     main(parsed_args)

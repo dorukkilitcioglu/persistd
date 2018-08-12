@@ -8,6 +8,10 @@ from util.command_line import askyn
 from util.persistable import Persistable
 from util.savers import save_dict_to_json, load_dict_from_json
 
+# this should never be the name of a project
+# if it is, shame on you
+DEFAULT_PROJECT_NAME = '|||||||'
+
 
 class Persister(Persistable):
 
@@ -45,7 +49,7 @@ class Persister(Persistable):
         # the program objects
         self.used_program_objs = {}
 
-        if os.path.exists(self.persister_obj_path):
+        if self.project_name != DEFAULT_PROJECT_NAME and os.path.exists(self.persister_obj_path):
             self.load()
 
     def _initialize_project(self):
@@ -104,6 +108,9 @@ class Persister(Persistable):
         """ Creates a new project. See _initialize_project for how to
         initialize a project.
         """
+        if not self.project_name or self.project_name == DEFAULT_PROJECT_NAME:
+            self.project_name = input('Please enter a name for your project: ')
+
         warnings = ("\nWARNING:\n"
                     "Before creating a project, make sure that you have followed the install instructions.\n"
                     "They can be found at: https://github.com/dorukkilitcioglu/persist-desktop#getting-started\n"
