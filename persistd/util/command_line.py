@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-from util import const
+from persistd.util import const
 
 
 def run_on_command_line(command, input=None, open_async=False):

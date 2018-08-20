@@ -1,7 +1,7 @@
 {
-    "name": "Persist Desktop Helper",
+    "name": "persistd Helper",
     "version": "1.0.0",
-    "description": "Chrome extension to persist your Chrome sessions. See https://github.com/dorukkilitcioglu/persist-desktop",
+    "description": "Chrome extension to persist your Chrome sessions. See https://github.com/dorukkilitcioglu/persistd",
     "manifest_version": 2,
     "background": {
         "scripts": ["background.js"]

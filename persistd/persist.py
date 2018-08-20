@@ -4,10 +4,10 @@ import argparse
 import os
 import sys
 
-import programs
-import settings
-from util.command_line import askyn
-from util.persister import DEFAULT_PROJECT_NAME, Persister
+import persistd.programs as programs
+import persistd.settings as settings
+from persistd.util.command_line import askyn
+from persistd.util.persister import DEFAULT_PROJECT_NAME, Persister
 
 
 def get_all_projects(base_path = settings.BASE_PATH):
@@ -157,5 +157,11 @@ def parse_args(args):
     main(parsed_args)
 
 
-if __name__ == '__main__':
+def main_cmd():
+    """ Starts the main process from CLI
+    """
     parse_args(sys.argv[1:])
+
+
+if __name__ == '__main__':
+    main_cmd()

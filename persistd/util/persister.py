@@ -2,11 +2,11 @@ import os
 import shutil
 import sys
 
-import desktops
-import programs
-from util.command_line import askyn
-from util.persistable import Persistable
-from util.savers import save_dict_to_json, load_dict_from_json
+import persistd.desktops as desktops
+import persistd.programs as programs
+from persistd.util.command_line import askyn
+from persistd.util.persistable import Persistable
+from persistd.util.savers import save_dict_to_json, load_dict_from_json
 
 # this should never be the name of a project
 # if it is, shame on you
@@ -21,7 +21,7 @@ class Persister(Persistable):
 
     @property
     def persister_folder_path(self):
-        return os.path.join(self.project_path, '.persist-desktop')
+        return os.path.join(self.project_path, '.persistd')
 
     @property
     def persister_obj_path(self):
@@ -113,7 +113,7 @@ class Persister(Persistable):
 
         warnings = ("\nWARNING:\n"
                     "Before creating a project, make sure that you have followed the install instructions.\n"
-                    "They can be found at: https://github.com/dorukkilitcioglu/persist-desktop#getting-started\n"
+                    "They can be found at: https://github.com/dorukkilitcioglu/persistd#getting-started\n"
                     "Specifically, make sure you edit the settings to have BASE_PATH pointing to a folder\n"
                     "and the program paths pointing to their relevant executables\n"
                     "If any operation files due to permissions, make sure you run the script with admin rights.\n"
@@ -121,11 +121,11 @@ class Persister(Persistable):
         print(warnings)
 
         if os.path.exists(self.project_path):
-            # Path exists, see if a persist desktop project has been initialized there
+            # Path exists, see if a persistd project has been initialized there
             if os.path.exists(self.persister_folder_path):
                 # Project has been initialized before
                 sys.exit("Error: project with the name %s already exists" % self.project_name)
-            elif askyn("Folder %s already exists, do you want to turn it into a persist-desktop project?" % self.project_name):
+            elif askyn("Folder %s already exists, do you want to turn it into a persistd project?" % self.project_name):
                 return self._initialize_project()
             else:
                 sys.exit("I don't think you really want to create this project...")
@@ -195,7 +195,7 @@ class Persister(Persistable):
         if not os.path.exists(self.project_path):
             sys.exit("Error: project with the name %s does not exist" % self.project_name)
         elif os.path.exists(self.persister_folder_path) and askyn("Do you want to keep the project files?"):
-            # only delete persist-desktop files
+            # only delete persistd files
             self.destroy()
             shutil.rmtree(self.persister_folder_path)
             print("Deleted project files.")

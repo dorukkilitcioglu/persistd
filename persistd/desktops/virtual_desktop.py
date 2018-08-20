@@ -7,11 +7,11 @@ from shutil import rmtree
 import time
 from zipfile import ZipFile
 
-from util.command_line import run_on_command_line
-from util.paths import DESKTOPS_PATH
-from util.savers import save_dict_to_json, load_dict_from_json
+from persistd.util.command_line import run_on_command_line
+from persistd.util.paths import DESKTOPS_PATH
+from persistd.util.savers import save_dict_to_json, load_dict_from_json
 
-from desktops.base_desktop import BaseDesktop
+from persistd.desktops.base_desktop import BaseDesktop
 
 logger = logging.getLogger(__name__)
 

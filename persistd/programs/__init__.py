@@ -1,6 +1,6 @@
-import programs.chrome as chrome
-import programs.conemu as conemu
-import programs.sublime_text as sublime_text
+import persistd.programs.chrome as chrome
+import persistd.programs.conemu as conemu
+import persistd.programs.sublime_text as sublime_text
 
 all_programs = [chrome,
                 conemu,

@@ -1,4 +1,4 @@
-from programs.chrome.chrome import Chrome
+from persistd.programs.chrome.chrome import Chrome
 
 Chrome = Chrome
 

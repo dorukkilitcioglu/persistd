@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from util.persistable import Persistable
+from persistd.util.persistable import Persistable
 
 
 class BaseProgram(Persistable, ABC):

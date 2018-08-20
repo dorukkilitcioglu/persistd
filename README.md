@@ -1,5 +1,5 @@
-# persist-desktop
-Persist-desktop is a workspace/workflow manager made for multi-tasking developers. It allows you to persist your virtual desktop over multiple reboots. Automatically open all your relevant programs, and close them when you're done for the day. Never fear the Windows updates again.
+# persistd
+persistd is a workspace/workflow manager made for multi-tasking developers. It allows you to persist your virtual desktop over multiple reboots. Automatically open all your relevant programs, and close them when you're done for the day. Never fear the Windows updates again.
 
 ## Getting Started
 
@@ -7,11 +7,11 @@ The development will be done using Python 3.7, and I won't be supporting Python 
 
 ### Installation
 
-The requirements and how to install them are specified [below](#requirements). Right now, there is no `setup.py` to install this program. That will come in later, as well as PyPI support. For now, just download this repo to a directory and (for ease of use) make sure your `path` includes the `persist-desktop` directory, so you can call `persist.py` directly.
+The requirements and how to install them are specified [below](#requirements). Right now, there is no `setup.py` to install this program. That will come in later, as well as PyPI support. For now, just download this repo to a directory and (for ease of use) make sure your `path` includes the `persistd` directory, so you can call `persist.py` directly.
 
-Once downloaded, you can and **should** modify [default settings](persist-desktop/settings/default.py) to point to your program executables. At minimum, you **must** modify the `BASE_PATH`, which will be the main directory that will contain all your projects. If you don't like to move your existing projects, you can simply symlink them to the directory given by `BASE_PATH`.
+Once downloaded, you can and **should** modify [default settings](persistd/settings/default.py) to point to your program executables. At minimum, you **must** modify the `BASE_PATH`, which will be the main directory that will contain all your projects. If you don't like to move your existing projects, you can simply symlink them to the directory given by `BASE_PATH`.
 
-Some of the other options in [default settings](persist-desktop/settings/default.py) are already set to the common install locations of the programs. They can be changed at will. The preferred method is to create a `local.py` with the same variables at the same directory, which will take precedence over `default.py`. This should make sure your updates are easy.
+Some of the other options in [default settings](persistd/settings/default.py) are already set to the common install locations of the programs. They can be changed at will. The preferred method is to create a `local.py` with the same variables at the same directory, which will take precedence over `default.py`. This should make sure your updates are easy.
 
 ### Requirements
 
@@ -83,7 +83,7 @@ If you're done with a project, you can delete it using
 ```
 python persist.py -d <project_name>
 ```
-This will ask you multiple times if you **really** want to delete that project. You can optionally delete only the persist-desktop files from the project.
+This will ask you multiple times if you **really** want to delete that project. You can optionally delete only the persistd files from the project.
 
 The two additional options are `-a` and `-r`, which adds or removes a program with the given name. For example, you can remove ConEmu from a project using
 ```
@@ -112,7 +112,7 @@ There is also a caveat with the current implementation, where if you use the reg
 
 #### Chrome (Windows)
 
-In order to use Chrome, you first need to install the relevant [extension](persist-desktop/programs/chrome/extension). You can find the steps to install the unpacked extension [here](https://stackoverflow.com/questions/24577024/install-chrome-extension-not-in-the-store). Make sure you point Chrome to the [extension folder](persist-desktop/programs/chrome/extension).
+In order to use Chrome, you first need to install the relevant [extension](persistd/programs/chrome/extension). You can find the steps to install the unpacked extension [here](https://stackoverflow.com/questions/24577024/install-chrome-extension-not-in-the-store). Make sure you point Chrome to the [extension folder](persistd/programs/chrome/extension).
 
 I will make sure to actually release it to Chrome Extension Store (or whatever that's called) after a while.
 
@@ -120,11 +120,11 @@ I will make sure to actually release it to Chrome Extension Store (or whatever t
 
 ConEmu is a good program. It is easy to work with. It doesn't have any problems because ConEmu is a good boy. We should all strive to be ConEmu.
 
-Seriously though, the only thing you have to do is to create your own [startfile](https://conemu.github.io/en/ConEmuArgs.html#Sample-file-or-task). The included one defaults to a single `cmd` window. After creating the project, modify the default startfile at `<project_path>/.persist-desktop/conemu/<project_name>_startfile.txt`. The next time you launch, ConEmu will use those settings.
+Seriously though, the only thing you have to do is to create your own [startfile](https://conemu.github.io/en/ConEmuArgs.html#Sample-file-or-task). The included one defaults to a single `cmd` window. After creating the project, modify the default startfile at `<project_path>/.persistd/conemu/<project_name>_startfile.txt`. The next time you launch, ConEmu will use those settings.
 
 ## Future Plans
 
-Look at the [issues](https://github.com/dorukkilitcioglu/persist-desktop/issues) to see what needs to be done. The first order of business is to get the first milestone working. From there on, more programs and desktops can be added in.
+Look at the [issues](https://github.com/dorukkilitcioglu/persistd/issues) to see what needs to be done. The first order of business is to get the first milestone working. From there on, more programs and desktops can be added in.
 
 ## Contributing
 

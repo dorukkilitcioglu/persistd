@@ -1,6 +1,6 @@
 import platform
 
-from programs.conemu.conemu_windows import ConEmuWindows
+from persistd.programs.conemu.conemu_windows import ConEmuWindows
 
 _implementations = {
     'Windows': ConEmuWindows,

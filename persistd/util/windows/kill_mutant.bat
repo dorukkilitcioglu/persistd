@@ -3,8 +3,8 @@ rem https://superuser.com/questions/963183/multiple-sublime-instances-using-diff
 rem Just in case this is run multiple times from a command line
 set pid=
 set handle=
-set process_name=%PERSIST_DESKTOP_MUTANT_PROCESS_NAME%
-set object_name=%PERSIST_DESKTOP_MUTANT_OBJECT_NAME%
+set process_name=%PERSISTD_MUTANT_PROCESS_NAME%
+set object_name=%PERSISTD_MUTANT_OBJECT_NAME%
 rem Make the working directory the directory of the batch file
 cd /d %~dp0
 rem Find PID and Handle

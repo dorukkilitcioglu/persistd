@@ -2,12 +2,12 @@ import logging
 import os
 import shutil
 
-import settings
-from util.command_line import run_on_command_line, kill_mutant
-from util.paths import PROGRAMS_PATH
-from util.savers import copy_file, save_dict_to_json, load_dict_from_json
+import persistd.settings as settings
+from persistd.util.command_line import run_on_command_line, kill_mutant
+from persistd.util.paths import PROGRAMS_PATH
+from persistd.util.savers import copy_file, save_dict_to_json, load_dict_from_json
 
-from programs.base_program import BaseProgram
+from persistd.programs.base_program import BaseProgram
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +56,7 @@ class SublimeTextWindows(BaseProgram):
         """
         warnings = ("\nWARNING:\n"
                     "Before running the project, make sure you configure Sublime Text correctly\n"
-                    "The instructions can be found at: https://github.com/dorukkilitcioglu/persist-desktop#sublimetext-windows\n"
+                    "The instructions can be found at: https://github.com/dorukkilitcioglu/persistd#sublimetext-windows\n"
                     )
         print(warnings)
         default_proj_path = os.path.join(PROGRAMS_PATH, 'sublime_text', 'default.sublime-project')

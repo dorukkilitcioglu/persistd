@@ -1,4 +1,4 @@
-import desktops.virtual_desktop as virtual_desktop
+import persistd.desktops.virtual_desktop as virtual_desktop
 
 all_desktops = [virtual_desktop,
                 ]

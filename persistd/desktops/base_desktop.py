@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from util.persistable import Persistable
+from persistd.util.persistable import Persistable
 
 
 class BaseDesktop(Persistable, ABC):
@@ -54,11 +54,11 @@ class BaseDesktop(Persistable, ABC):
         pass
 
     @abstractmethod
-    def launch_program(self, program_path, args=None, desktop_id=None, open_async=False, sleep=None):
+    def launch_program(self, command, args=None, desktop_id=None, open_async=False, sleep=None):
         """ Launches a program, with optional args, at a given desktop.
 
         Args:
-            command::list(str)
+            command::[str]
                 The command to run. The first element in list is the
                 executable, the rest are the arguments
             input::bytes
@@ -76,7 +76,7 @@ class BaseDesktop(Persistable, ABC):
         Returns:
             pid::int
                 The process id of the created process. May be None
-                if the process was not successfully launched..
+                if the process was not successfully launched.
         """
         pass
 
