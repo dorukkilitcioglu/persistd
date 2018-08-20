@@ -1,0 +1,7 @@
+recursive-include persistd/desktops *
+recursive-include persistd/programs *
+recursive-include persistd/settings *
+recursive-include persistd/util *
+global-exclude __pycache__/*
+global-exclude VirtualDesktop.exe
+global-exclude local*
