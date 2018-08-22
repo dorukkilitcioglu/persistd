@@ -160,6 +160,12 @@ class Persister(Persistable):
             for program_name, program_obj in self.used_program_objs.items():
                 program_obj.start()
             self.save()
+        elif os.path.exists(self.project_path):
+            if askyn("Folder %s already exists, do you want to turn it into a persistd project?" % self.project_name):
+                return self._initialize_project()
+            else:
+                print("Not turning %s into a persistd project." % self.program_name)
+
         else:
             sys.exit("Error: project with the name %s does not exist" % self.project_name)
 
