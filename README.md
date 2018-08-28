@@ -1,4 +1,5 @@
-# persistd
+<img src="logo.png" alt="persistd logo" width="250"/>
+
 persistd is a workspace/workflow manager made for multi-tasking developers. It allows you to persist your virtual desktop over multiple reboots. Automatically open all your relevant programs, and close them when you're done for the day. Never fear the Windows updates again.
 
 ## Getting Started
