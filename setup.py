@@ -1,5 +1,7 @@
 from setuptools import setup, find_packages
 
+with open('README.md') as fp:
+    long_description = fp.read()
 
 setup(
     name='persistd',
@@ -16,7 +18,8 @@ setup(
     include_package_data=True,
     url='https://github.com/dorukkilitcioglu/persistd',
     license='GPLv3',
-    long_description=open('README.md').read(),
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
