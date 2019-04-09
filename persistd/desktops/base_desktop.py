@@ -20,6 +20,7 @@ class BaseDesktop(Persistable, ABC):
         self.project_name = project_name
         self.project_path = project_path
         self.persist_path = persist_path
+        self.setup()
 
     @abstractmethod
     def setup(self):

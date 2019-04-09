@@ -23,8 +23,10 @@ class VirtualDesktop(BaseDesktop):
     # closed
     virtual_desktop_id = None
 
-    # Path to VirtualDesktop.exe
-    exe_path = None
+    @property
+    def exe_path(self):
+        # Path to VirtualDesktop.exe
+        return os.path.join(DESKTOPS_PATH, 'VirtualDesktop.exe')
 
     @property
     def object_persist_path(self):
@@ -37,10 +39,7 @@ class VirtualDesktop(BaseDesktop):
         return ('Windows', '10')
 
     def setup(self):
-        possible_exe_path = os.path.join(DESKTOPS_PATH, 'VirtualDesktop.exe')
-        if os.path.exists(possible_exe_path):
-            self.exe_path = possible_exe_path
-        if not self.exe_path:
+        if not os.path.exists(self.exe_path):
             return self._setup()
         return True
 

@@ -4,7 +4,7 @@ import shutil
 
 import persistd.settings as settings
 from persistd.util.command_line import run_on_command_line
-from persistd.util.paths import PROGRAMS_PATH
+from persistd.util.paths import CODE_PATH, PROGRAMS_PATH
 from persistd.util.savers import copy_file, save_dict_to_json, load_dict_from_json
 
 from persistd.programs.base_program import BaseProgram
@@ -39,6 +39,9 @@ class ConEmuWindows(BaseProgram):
         """ Sets up the program for first use in this project.
         """
         default_startfile_path = os.path.join(PROGRAMS_PATH, 'conemu', 'startfile_windows.txt')
+        # put the default in the data path
+        if not os.path.exists(default_startfile_path):
+            copy_file(os.path.join(CODE_PATH, 'programs', 'sublime_text', 'default.sublime-project'), default_startfile_path)
         copy_file(default_startfile_path, self.startfile_path)
 
     def start(self):
