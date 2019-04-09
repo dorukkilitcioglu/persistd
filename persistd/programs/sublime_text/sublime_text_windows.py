@@ -4,7 +4,7 @@ import shutil
 
 import persistd.settings as settings
 from persistd.util.command_line import run_on_command_line, kill_mutant
-from persistd.util.paths import PROGRAMS_PATH
+from persistd.util.paths import CODE_PATH, PROGRAMS_PATH
 from persistd.util.savers import copy_file, save_dict_to_json, load_dict_from_json
 
 from persistd.programs.base_program import BaseProgram
@@ -60,12 +60,17 @@ class SublimeTextWindows(BaseProgram):
                     )
         print(warnings)
         default_proj_path = os.path.join(PROGRAMS_PATH, 'sublime_text', 'default.sublime-project')
+        # put the default in the data path
+        if not os.path.exists(default_proj_path):
+            copy_file(os.path.join(CODE_PATH, 'programs', 'sublime_text', 'default.sublime-project'), default_proj_path)
         copy_file(default_proj_path, self.sublimeproj_path)
         copy_file(settings.SUBLIME_TEXT_PATH, self.sublime_exe_path)
 
     def start(self):
         """ Starts a brand new instance of SublimeText
         """
+        if not os.path.exists(self.sublime_exe_path):
+            copy_file(settings.SUBLIME_TEXT_PATH, self.sublime_exe_path)
         # TODO make this more deterministic
         # It seems like you need some waiting before switching sublimetext
         # So just sleep for 2 secs
