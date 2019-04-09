@@ -67,10 +67,8 @@ class VirtualDesktop(BaseDesktop):
             return False
 
         logger.info("Cleaning up VirtualDesktop installation files...")
-        exe_path = os.path.join(DESKTOPS_PATH, 'VirtualDesktop.exe')
-        os.rename(os.path.join(install_dir, 'VirtualDesktop.exe'), exe_path)
+        os.rename(os.path.join(install_dir, 'VirtualDesktop.exe'), self.exe_path)
         rmtree(zip_path)
-        self.exe_path = exe_path
 
         logger.info("VirtualDesktop is ready to go!")
         return True

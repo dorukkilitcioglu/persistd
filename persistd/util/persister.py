@@ -88,6 +88,8 @@ class Persister(Persistable):
         Desktop = desktops.code_name_to_class[self.used_desktop]
         persist_path = os.path.join(self.persister_folder_path, self.used_desktop)
         self.used_desktop_obj = Desktop(self.project_name, self.project_path, persist_path)
+        if not self.used_desktop_obj.setup():
+            sys.exit("Error: could not set up %s. Make sure you have correct access rights and internet." % self.used_desktop)
 
     def _initialize_program_obj(self, program_name):
         """ Initializes a program object using `program_name` string
