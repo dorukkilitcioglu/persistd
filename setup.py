@@ -5,7 +5,7 @@ with open('README.md') as fp:
 
 setup(
     name='persistd',
-    version='1.2.0',
+    version='1.2.1',
     author='Doruk Kilitcioglu',
     author_email='doruk.kilitcioglu@gmail.com',
     install_requires=["requests"],
