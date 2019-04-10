@@ -45,7 +45,11 @@ function saveTabs(tabs) {
         }
     }
     obj = {};
-    obj[projectName] = {windowId: savedWindowId, tabs: tabUrls};
+    if(should_close) {
+        obj[projectName] = {tabs: tabUrls};
+    } else {
+        obj[projectName] = {windowId: savedWindowId, tabs: tabUrls};
+    }
     chrome.storage.local.set(obj, function() { console.log('Saved tabs'); });
     // first, close the opened tab that triggered this script
     chrome.tabs.remove(tabId, function() { console.log('Removed triggering tab'); });
