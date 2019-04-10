@@ -83,6 +83,13 @@ class SublimeTextWindows(BaseProgram):
             logger.error("Could not start SublimeText on path %s", self.project_path)
             return False
 
+    def persist(self):
+        """ Persists the state without closing
+        """
+        # Nothing to do right now
+        # TODO also persist the session
+        return True
+
     def close(self):
         """ Closes the program, persisting the state
 

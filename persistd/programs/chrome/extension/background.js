@@ -35,7 +35,7 @@ function start(windowId) {
 }
 
 // Saves the tabs, closes the triggering tab, and closes the window
-function saveTabsAndClose(tabs) {
+function saveTabs(tabs) {
     tabUrls = []
     for(i in tabs) {
         tab = tabs[i];
@@ -45,33 +45,43 @@ function saveTabsAndClose(tabs) {
         }
     }
     obj = {};
-    obj[projectName] = {tabs: tabUrls};
+    obj[projectName] = {windowId: savedWindowId, tabs: tabUrls};
     chrome.storage.local.set(obj, function() { console.log('Saved tabs'); });
     // first, close the opened tab that triggered this script
     chrome.tabs.remove(tabId, function() { console.log('Removed triggering tab'); });
-    // then, close the window
-    chrome.windows.remove(savedWindowId, function() { console.log('Closed window'); });
-    if(destroy) {
-        chrome.storage.local.remove(projectName, function() { console.log('Removed project: ' + projectName); });
+    if(should_close) {
+        // then, close the window
+        chrome.windows.remove(savedWindowId, function() { console.log('Closed window'); });
+        if(destroy) {
+            chrome.storage.local.remove(projectName, function() { console.log('Removed project: ' + projectName); });
+        }
     }
 }
 
 // Gets the saved window from project storage
-// and then calls saveTabsAndClose()
+// and then calls saveTabs()
 function getSavedWindow(project) {
     project = project[projectName];
     if(project && project.windowId != undefined) {
         savedWindowId = project.windowId;
-        chrome.tabs.query({windowId: savedWindowId}, saveTabsAndClose);
+        chrome.tabs.query({windowId: savedWindowId}, saveTabs);
     } else {
         chrome.tabs.remove(tabId, function() { console.log('Removed triggering tab'); });
         console.log("Can't find any window id for this project");
     }
 }
 
+// Persists the state without closing the program
+function persist(windowId) {
+    console.log('persist called');
+    should_close = false;
+    chrome.storage.local.get(projectName, getSavedWindow);
+}
+
 // Closes the program, persisting the state
 function close(windowId) {
     console.log('close called');
+    should_close = true;
     chrome.storage.local.get(projectName, getSavedWindow);
 }
 
@@ -81,6 +91,9 @@ function launchAction(tab) {
     switch(action) {
         case 'start':
             start(windowId);
+            break;
+        case 'persist':
+            persist(windowId);
             break;
         case 'close':
             // Just close, don't destroy the storage
@@ -101,11 +114,13 @@ function launchAction(tab) {
 // Add a listener for this specific address
 chrome.webRequest.onBeforeRequest.addListener(
     function(details) {
-        matches = details.url.match("project_name=([^&]*)&action=([^&]*)");
-        projectName = matches[1]
-        action = matches[2]
-        tabId = details.tabId;
-        chrome.tabs.get(tabId, launchAction);
+        if(!('initiator' in details)) {
+            matches = details.url.match("project_name=([^&]*)&action=([^&]*)");
+            projectName = matches[1]
+            action = matches[2]
+            tabId = details.tabId;
+            chrome.tabs.get(tabId, launchAction);
+        }
         return { cancel: true };
     },
     {

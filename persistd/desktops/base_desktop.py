@@ -41,6 +41,13 @@ class BaseDesktop(Persistable, ABC):
         pass
 
     @abstractmethod
+    def persist_desktop(self, desktop_id=None):
+        """ Persists a given desktop. If desktop_id
+        is None, should persist the created desktop.
+        """
+        pass
+
+    @abstractmethod
     def close_desktop(self, desktop_id=None):
         """ Closes a given desktop. If desktop_id
         is None, should close the created desktop.

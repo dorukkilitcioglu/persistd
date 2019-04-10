@@ -104,6 +104,14 @@ class VirtualDesktop(BaseDesktop):
             logger.error("Could not switch to virtual desktop #%s", desktop_id)
             return False
 
+    def persist_desktop(self, desktop_id=None):
+        """ Persists a given desktop. If desktop_id
+        is None, should persist the created desktop.
+        """
+        # Nothing to do for now
+        # TODO find which desktop is now being used for this project and save that
+        pass
+
     def close_desktop(self, desktop_id=None):
         """ Closes a given desktop. If desktop_id
         is None, should close the created desktop.

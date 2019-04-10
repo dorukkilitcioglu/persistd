@@ -56,6 +56,12 @@ class ConEmuWindows(BaseProgram):
             logger.error("Could not start ConEmu.")
             return False
 
+    def persist(self):
+        """ Persists the state without closing
+        """
+        # nothing to do right now
+        return True
+
     def close(self):
         """ Closes the program, persisting the state
         """

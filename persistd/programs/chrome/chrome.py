@@ -44,6 +44,17 @@ class Chrome(BaseProgram):
             logger.error("Could not start Chrome.")
             return False
 
+    def persist(self):
+        """ Persists the state without closing
+        """
+        return_code, _, _ = run_on_command_line([settings.CHROME_PATH, "--new-window", self.get_url('persist')])
+        if return_code is 0:
+            logger.info("Persisted Chrome window")
+            return True
+        else:
+            logger.error("Could not persist Chrome window")
+            return False
+
     def close(self):
         """ Closes the program, persisting the state
         """

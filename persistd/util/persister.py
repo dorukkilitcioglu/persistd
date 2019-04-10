@@ -186,6 +186,16 @@ class Persister(Persistable):
         else:
             sys.exit("Error: project with the name %s does not exist" % self.project_name)
 
+    def persist_project(self):
+        """ Persists a project without closing it
+        """
+        if os.path.exists(self.persister_folder_path):
+            for program_name, program_obj in self.used_program_objs.items():
+                program_obj.persist()
+            self.used_desktop_obj.persist_desktop()
+        else:
+            sys.exit("Error: project with the name %s does not exist" % self.project_name)
+
     def close_project(self):
         """ Closes a project
         """

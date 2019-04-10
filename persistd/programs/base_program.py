@@ -37,6 +37,12 @@ class BaseProgram(Persistable, ABC):
         pass
 
     @abstractmethod
+    def persist(self):
+        """ Persists the state without closing
+        """
+        pass
+
+    @abstractmethod
     def close(self):
         """ Closes the program, persisting the state
         """
