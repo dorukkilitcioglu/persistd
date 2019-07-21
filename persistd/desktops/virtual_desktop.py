@@ -45,7 +45,7 @@ class VirtualDesktop(BaseDesktop):
 
     def _setup(self):
         logger.info("Downloading VirtualDesktop from Github...")
-        package_url = 'https://github.com/MScholtes/VirtualDesktop/archive/11597438e9559cbe19ef2927451129adfe6a6704.zip'
+        package_url = 'https://github.com/MScholtes/VirtualDesktop/archive/ca765148bcbca5b0675e8b151e2a76fc299460f1.zip'
         zip_raw = requests.get(package_url)
 
         zip_path = os.path.join(DESKTOPS_PATH, 'VirtualDesktop')
@@ -55,7 +55,7 @@ class VirtualDesktop(BaseDesktop):
         zip_file.extractall(zip_path)
 
         logger.info("Installing VirtualDesktop...")
-        install_dir = os.path.join(zip_path, 'VirtualDesktop-11597438e9559cbe19ef2927451129adfe6a6704')
+        install_dir = os.path.join(zip_path, 'VirtualDesktop-ca765148bcbca5b0675e8b151e2a76fc299460f1')
         cwd = os.getcwd()
         os.chdir(install_dir)
         return_code, stdout, _ = run_on_command_line(['Compile.bat'], input='.'.encode('utf-8'))
