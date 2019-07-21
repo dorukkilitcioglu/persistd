@@ -5,7 +5,7 @@ import os
 import sys
 
 import persistd.programs as programs
-import persistd.settings as settings
+from persistd.settings import settings
 from persistd.util.command_line import askyn
 from persistd.util.persister import DEFAULT_PROJECT_NAME, Persister
 
@@ -14,6 +14,7 @@ def get_all_projects(base_path = settings.BASE_PATH):
     return [d for d in next(os.walk(base_path))[1] if not d.startswith('.')]
 
 
+ACTION_SETTINGS = 'settings'
 ACTION_LIST_PROJECTS = 'list-projects'
 ACTION_NEW = 'new'
 ACTION_OPEN = 'open'
@@ -23,8 +24,8 @@ ACTION_DELETE = 'delete'
 ACTION_ADD = 'add'
 ACTION_REMOVE = 'remove'
 ACTION_INTERACTIVE = 'interactive'
-ALL_ACTIONS = [ACTION_LIST_PROJECTS, ACTION_NEW, ACTION_OPEN, ACTION_PERSIST, ACTION_CLOSE, ACTION_DELETE,
-               ACTION_ADD, ACTION_REMOVE, ACTION_INTERACTIVE]
+ALL_ACTIONS = [ACTION_SETTINGS, ACTION_LIST_PROJECTS, ACTION_NEW, ACTION_OPEN, ACTION_PERSIST,
+               ACTION_CLOSE, ACTION_DELETE, ACTION_ADD, ACTION_REMOVE, ACTION_INTERACTIVE]
 # actions that operate on a project
 PROJECT_ACTIONS = [ACTION_OPEN, ACTION_PERSIST, ACTION_CLOSE, ACTION_DELETE, ACTION_ADD, ACTION_REMOVE]
 # actions that operate on programs
@@ -36,6 +37,7 @@ def get_action():
     """
     print('Available actions:')
     actions = [
+        "Update settings",
         "List all projects under the base path",
         "Create a new project",
         "Open a project",
@@ -117,6 +119,8 @@ def main(args):
         print('Launching %s' % project_name)
         persister = Persister(settings.BASE_PATH, project_name)
         persister.launch_project()
+    elif args.settings:
+        pass
     elif args.new:
         persister.create_project()
     # Then, check if project_name is set
@@ -147,6 +151,7 @@ def parse_args(args):
     """ Parses command line args into a dictionary and calls main
     """
     parser = argparse.ArgumentParser(description="Persist your desktop.")
+    parser.add_argument('-s', '--settings', action='store_true', help="update settings")
     parser.add_argument('-i', '--interactive', action='store_true', help="start interactive mode")
     parser.add_argument('-n', '--new', action='store_true', help="create a new project")
     parser.add_argument('-o', '--open', action='store_true', help="open a project")

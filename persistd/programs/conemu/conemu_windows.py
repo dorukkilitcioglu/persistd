@@ -2,7 +2,7 @@ import logging
 import os
 import shutil
 
-import persistd.settings as settings
+from persistd.settings import settings
 from persistd.util.command_line import run_on_command_line
 from persistd.util.paths import CODE_PATH, PROGRAMS_PATH
 from persistd.util.savers import copy_file, save_dict_to_json, load_dict_from_json
