@@ -108,6 +108,24 @@ def interactive():
     parse_args(args)
 
 
+def get_setting():
+    """ Edits a setting or exits
+    """
+    print('Available settings:')
+    all_settings = list(settings.keys())
+    for i, setting in enumerate(all_settings, start=1):
+        print('{0:d}. {1:s}'.format(i, setting))
+    ind = int(input('Please enter the index of the project you want to launch, or 0 to exit: ')) - 1
+    if ind > -1 and ind < len(all_settings):
+        setting = all_settings[ind]
+        setattr(settings, setting, input("Please enter the new value: "))
+        print("Input saved.")
+    elif ind == -1:
+        sys.exit(0)
+    else:
+        sys.exit('The specified index is not valid.')
+
+
 def main(args):
     persister = Persister(settings.BASE_PATH, args.project_name)
 
@@ -120,7 +138,7 @@ def main(args):
         persister = Persister(settings.BASE_PATH, project_name)
         persister.launch_project()
     elif args.settings:
-        pass
+        get_setting()
     elif args.new:
         persister.create_project()
     # Then, check if project_name is set

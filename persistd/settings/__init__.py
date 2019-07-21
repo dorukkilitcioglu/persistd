@@ -21,6 +21,8 @@ class attrdict(dict):
 
     def __setattr__(self, name, value):
         self[name] = value
+        with open(LOCAL_SETTINGS_PATH, 'w') as fp:
+            json.dump(self, fp)
 
     def __delattr__(self, name):
         if name in self:
@@ -30,15 +32,11 @@ class attrdict(dict):
 
 
 settings = attrdict()
-settings.BASE_PATH = None
-settings.SUBLIME_TEXT_PATH = None
-settings.CONEMU_PATH = None
-settings.CHROME_PATH = None
 
-with open(os.path.join(DEFAULT_SETTINGS_PATH), 'r') as fp:
+with open(DEFAULT_SETTINGS_PATH, 'r') as fp:
     default_settings = json.load(fp)
     settings.update(default_settings)
 
-with open(os.path.join(LOCAL_SETTINGS_PATH), 'r') as fp:
+with open(LOCAL_SETTINGS_PATH, 'r') as fp:
     local_settings = json.load(fp)
     settings.update(local_settings)
