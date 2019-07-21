@@ -12,6 +12,9 @@ def _get_persistd_path():
 # Path to the base persistd folder.
 PERSISTD_PATH = _get_persistd_path()
 
+# Path to settings folder
+SETTINGS_PATH = os.path.join(PERSISTD_PATH, 'settings')
+
 # Path to the programs folder
 PROGRAMS_PATH = os.path.join(PERSISTD_PATH, 'programs')
 
