@@ -39,9 +39,17 @@ class VirtualDesktop(BaseDesktop):
         return ('Windows', '10')
 
     def setup(self):
+        self._check_md5()
         if not os.path.exists(self.exe_path):
             return self._setup()
         return True
+
+    def _check_md5(self):
+        true_md5 = "df900e2a17bf8b73c2cb3835a681b3f9"
+        _, stdout, _ = run_on_command_line(['certutil', '-hashfile', self.exe_path, 'md5'])
+        md5 = stdout.split('\n')[1].strip()
+        if md5 != true_md5:
+            os.remove(self.exe_path)
 
     def _setup(self):
         logger.info("Downloading VirtualDesktop from Github...")
