@@ -1,10 +1,12 @@
 import persistd.programs.chrome as chrome
 import persistd.programs.conemu as conemu
 import persistd.programs.sublime_text as sublime_text
+import persistd.programs.vscode as vscode
 
 all_programs = [chrome,
                 conemu,
                 sublime_text,
+                vscode,
                 ]
 
 code_name_to_class = {program.CODE_NAME: program.PROGRAM_CLASS
