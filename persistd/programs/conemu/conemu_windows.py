@@ -41,7 +41,7 @@ class ConEmuWindows(BaseProgram):
         default_startfile_path = os.path.join(PROGRAMS_PATH, 'conemu', 'startfile_windows.txt')
         # put the default in the data path
         if not os.path.exists(default_startfile_path):
-            copy_file(os.path.join(CODE_PATH, 'programs', 'sublime_text', 'default.sublime-project'), default_startfile_path)
+            copy_file(os.path.join(CODE_PATH, 'programs', 'conemu', 'startfile_windows.txt'), default_startfile_path)
         copy_file(default_startfile_path, self.startfile_path)
 
     def start(self):
