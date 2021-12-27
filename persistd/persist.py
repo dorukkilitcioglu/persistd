@@ -1,17 +1,13 @@
 #!/usr/bin/env python
 
 import argparse
-import os
 import sys
 
 import persistd.programs as programs
+from persistd.util.projects import get_all_projects
 from persistd.util.settings import SETTINGS
 from persistd.util.command_line import askyn
 from persistd.util.persister import DEFAULT_PROJECT_NAME, Persister
-
-
-def get_all_projects(base_path=SETTINGS.base_path):
-    return [d for d in next(os.walk(base_path))[1] if not d.startswith('.')]
 
 
 ACTION_SETTINGS = 'settings'
