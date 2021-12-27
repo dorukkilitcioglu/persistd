@@ -10,6 +10,8 @@ from persistd.util.savers import save_dict_to_json, load_dict_from_json
 
 # this should never be the name of a project
 # if it is, shame on you
+from persistd.util.settings import SETTINGS
+
 DEFAULT_PROJECT_NAME = '|||||||'
 
 
@@ -85,18 +87,19 @@ class Persister(Persistable):
     def _initialize_desktop_obj(self):
         """ Initializes the desktop object using the `self.used_desktop` string
         """
-        Desktop = desktops.code_name_to_class[self.used_desktop]
+        desktop_class = desktops.code_name_to_class[self.used_desktop]
         persist_path = os.path.join(self.persister_folder_path, self.used_desktop)
-        self.used_desktop_obj = Desktop(self.project_name, self.project_path, persist_path)
+        self.used_desktop_obj = desktop_class(self.project_name, self.project_path, persist_path)
         if not self.used_desktop_obj.setup():
-            sys.exit("Error: could not set up %s. Make sure you have correct access rights and internet." % self.used_desktop)
+            sys.exit(f"Error: could not set up {self.used_desktop}. "
+                     f"Make sure you have correct access rights and internet.")
 
     def _initialize_program_obj(self, program_name):
         """ Initializes a program object using `program_name` string
         """
-        Program = programs.code_name_to_class[program_name]
+        program_class = programs.code_name_to_class[program_name]
         persist_path = os.path.join(self.persister_folder_path, program_name)
-        program = Program(self.project_name, self.project_path, persist_path, self.used_desktop_obj)
+        program = program_class(self.project_name, self.project_path, persist_path, self.used_desktop_obj)
         self.used_program_objs[program_name] = program
         return program
 
@@ -162,11 +165,12 @@ class Persister(Persistable):
             for program_name, program_obj in self.used_program_objs.items():
                 program_obj.start()
             self.save()
+            SETTINGS.add_open_project(self.project_name)
         elif os.path.exists(self.project_path):
             if askyn("Folder %s already exists, do you want to turn it into a persistd project?" % self.project_name):
                 return self._initialize_project()
             else:
-                print("Not turning %s into a persistd project." % self.program_name)
+                print("Not turning %s into a persistd project." % self.project_name)
 
         else:
             sys.exit("Error: project with the name %s does not exist" % self.project_name)
@@ -204,6 +208,7 @@ class Persister(Persistable):
                 program_obj.close()
             self.used_desktop_obj.close_desktop()
             self.save()
+            SETTINGS.remove_open_project(self.project_name)
         else:
             sys.exit("Error: project with the name %s does not exist" % self.project_name)
 
