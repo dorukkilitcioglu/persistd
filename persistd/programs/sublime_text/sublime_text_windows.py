@@ -2,7 +2,7 @@ import logging
 import os
 import shutil
 
-from persistd.settings import settings
+from persistd.util.settings import SETTINGS
 from persistd.util.command_line import run_on_command_line, kill_mutant
 from persistd.util.paths import CODE_PATH, PROGRAMS_PATH
 from persistd.util.savers import copy_file, save_dict_to_json, load_dict_from_json
@@ -39,7 +39,7 @@ class SublimeTextWindows(BaseProgram):
     def sublime_exe_path(self):
         """ Path of the copied SublimeText executable
         """
-        standard_exe_path = settings.SUBLIME_TEXT_PATH
+        standard_exe_path = SETTINGS.SUBLIME_TEXT_PATH
         return os.path.join(os.path.dirname(standard_exe_path), self.sublime_exe_filename)
 
     @property
@@ -64,13 +64,13 @@ class SublimeTextWindows(BaseProgram):
         if not os.path.exists(default_proj_path):
             copy_file(os.path.join(CODE_PATH, 'programs', 'sublime_text', 'default.sublime-project'), default_proj_path)
         copy_file(default_proj_path, self.sublimeproj_path)
-        copy_file(settings.SUBLIME_TEXT_PATH, self.sublime_exe_path)
+        copy_file(SETTINGS.SUBLIME_TEXT_PATH, self.sublime_exe_path)
 
     def start(self):
         """ Starts a brand new instance of SublimeText
         """
         if not os.path.exists(self.sublime_exe_path):
-            copy_file(settings.SUBLIME_TEXT_PATH, self.sublime_exe_path)
+            copy_file(SETTINGS.SUBLIME_TEXT_PATH, self.sublime_exe_path)
         # TODO make this more deterministic
         # It seems like you need some waiting before switching sublimetext
         # So just sleep for 2 secs

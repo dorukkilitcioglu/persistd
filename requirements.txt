@@ -1,1 +1,2 @@
+dataclasses_json
 requests

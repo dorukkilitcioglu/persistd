@@ -2,7 +2,7 @@ import logging
 import os
 import shutil
 
-from persistd.settings import settings
+from persistd.util.settings import SETTINGS
 from persistd.util.command_line import run_on_command_line
 from persistd.util.savers import save_dict_to_json, load_dict_from_json
 
@@ -36,7 +36,8 @@ class Chrome(BaseProgram):
     def start(self):
         """ Starts a new instance of this program
         """
-        pid = self.desktop.launch_program([settings.CHROME_PATH, "--new-window", self.get_url('start')], open_async=True, sleep=2, max_tries=0)
+        pid = self.desktop.launch_program([SETTINGS.CHROME_PATH, "--new-window", self.get_url('start')],
+                                          open_async=True, sleep=2, max_tries=0)
         if pid is not None:
             logger.info("Started Chrome.")
             return True
@@ -47,7 +48,7 @@ class Chrome(BaseProgram):
     def persist(self):
         """ Persists the state without closing
         """
-        return_code, _, _ = run_on_command_line([settings.CHROME_PATH, "--new-window", self.get_url('persist')])
+        return_code, _, _ = run_on_command_line([SETTINGS.CHROME_PATH, "--new-window", self.get_url('persist')])
         if return_code is 0:
             logger.info("Persisted Chrome window")
             return True
@@ -58,7 +59,7 @@ class Chrome(BaseProgram):
     def close(self):
         """ Closes the program, persisting the state
         """
-        return_code, _, _ = run_on_command_line([settings.CHROME_PATH, "--new-window", self.get_url('close')])
+        return_code, _, _ = run_on_command_line([SETTINGS.CHROME_PATH, "--new-window", self.get_url('close')])
         if return_code is 0:
             logger.info("Closed Chrome window")
             return True
@@ -70,7 +71,7 @@ class Chrome(BaseProgram):
         """ Deletes all info regarding this program from the project
         """
         shutil.rmtree(self.persist_path)
-        return_code, _, _ = run_on_command_line([settings.CHROME_PATH, "--new-window", self.get_url('destroy')])
+        return_code, _, _ = run_on_command_line([SETTINGS.CHROME_PATH, "--new-window", self.get_url('destroy')])
         if return_code is 0:
             logger.info("Destroyed Chrome storage for this project")
             return True

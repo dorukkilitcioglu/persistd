@@ -2,7 +2,7 @@ import logging
 import os
 import shutil
 
-from persistd.settings import settings
+from persistd.util.settings import SETTINGS
 from persistd.util.command_line import run_on_command_line
 from persistd.util.paths import CODE_PATH, PROGRAMS_PATH
 from persistd.util.savers import copy_file, save_dict_to_json, load_dict_from_json
@@ -47,7 +47,7 @@ class ConEmuWindows(BaseProgram):
     def start(self):
         """ Starts a new instance of this program
         """
-        pid = self.desktop.launch_program([settings.CONEMU_PATH, "/cmd", "@%s" % self.startfile_path], open_async=True)
+        pid = self.desktop.launch_program([SETTINGS.CONEMU_PATH, "/cmd", "@%s" % self.startfile_path], open_async=True)
         if pid is not None:
             logger.info("Started ConEmu.")
             self.conemu_pid = pid

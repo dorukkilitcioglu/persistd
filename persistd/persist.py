@@ -5,12 +5,12 @@ import os
 import sys
 
 import persistd.programs as programs
-from persistd.settings import settings
+from persistd.util.settings import SETTINGS
 from persistd.util.command_line import askyn
 from persistd.util.persister import DEFAULT_PROJECT_NAME, Persister
 
 
-def get_all_projects(base_path = settings.BASE_PATH):
+def get_all_projects(base_path=SETTINGS.BASE_PATH):
     return [d for d in next(os.walk(base_path))[1] if not d.startswith('.')]
 
 
@@ -112,13 +112,14 @@ def get_setting():
     """ Edits a setting or exits
     """
     print('Available settings:')
-    all_settings = list(settings.keys())
+    all_settings = list(SETTINGS.field_names())
     for i, setting in enumerate(all_settings, start=1):
         print('{0:d}. {1:s}'.format(i, setting))
     ind = int(input('Please enter the index of the project you want to launch, or 0 to exit: ')) - 1
     if ind > -1 and ind < len(all_settings):
         setting = all_settings[ind]
-        setattr(settings, setting, input("Please enter the new value: "))
+        setattr(SETTINGS, setting, input("Please enter the new value: "))
+        SETTINGS.save()
         print("Input saved.")
     elif ind == -1:
         sys.exit(0)
@@ -127,7 +128,7 @@ def get_setting():
 
 
 def main(args):
-    persister = Persister(settings.BASE_PATH, args.project_name)
+    persister = Persister(SETTINGS.BASE_PATH, args.project_name)
 
     # First, take care of options that don't need the project_name
     if args.interactive:
@@ -135,7 +136,7 @@ def main(args):
     elif args.list_projects:
         project_name = get_project()
         print('Launching %s' % project_name)
-        persister = Persister(settings.BASE_PATH, project_name)
+        persister = Persister(SETTINGS.BASE_PATH, project_name)
         persister.launch_project()
     elif args.settings:
         get_setting()

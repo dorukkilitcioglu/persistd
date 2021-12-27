@@ -5,7 +5,7 @@ import platform
 def _get_persistd_path():
     """ Gets the path to base persistd folder
     """
-    if platform.system() is 'Windows':
+    if platform.system() == 'Windows':
         return os.path.join(os.getenv('LOCALAPPDATA'), 'persistd')
 
 

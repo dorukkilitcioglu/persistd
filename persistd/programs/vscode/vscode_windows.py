@@ -3,7 +3,7 @@ import logging
 import shutil
 
 from persistd.programs.base_program import BaseProgram
-from persistd.settings import settings
+from persistd.util.settings import SETTINGS
 from persistd.util.command_line import run_on_command_line
 from persistd.util.savers import save_dict_to_json, load_dict_from_json
 
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class VSCodeWindows(BaseProgram):
     vscode_pid = None
     full_path = None
-    is_remote = False
+    host_type = 'local'
 
     @property
     def object_persist_path(self):
@@ -30,12 +30,12 @@ class VSCodeWindows(BaseProgram):
     def start(self):
         """ Starts a new instance of this program
         """
-        program_args = [settings.VSCODE_PATH, "-n"]
-        if self.is_remote:
+        program_args = [SETTINGS.VSCODE_PATH, "-n"]
+        if self.host_type == 'wsl':
+            program_args.extend(["--remote", "wsl+Ubuntu"])
+        elif self.host_type == 'remote':
             program_args.append("--folder_uri")
         program_args.append(self.full_path if self.full_path else self.project_path)
-        print(program_args)
-        print(os.environ)
         pid = self.desktop.launch_program(program_args, open_async=True)
         if pid is not None:
             logger.info("Started VSCode.")

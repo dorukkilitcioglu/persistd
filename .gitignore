@@ -113,3 +113,6 @@ persistd/settings/local.py
 
 # The persistd object for this repo
 .persistd
+
+# IDE
+.idea
