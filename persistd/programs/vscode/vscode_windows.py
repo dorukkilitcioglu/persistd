@@ -30,7 +30,7 @@ class VSCodeWindows(BaseProgram):
     def start(self):
         """ Starts a new instance of this program
         """
-        program_args = [SETTINGS.VSCODE_PATH, "-n"]
+        program_args = [SETTINGS.vscode_path, "-n"]
         if self.host_type == 'wsl':
             program_args.extend(["--remote", "wsl+Ubuntu"])
         elif self.host_type == 'remote':

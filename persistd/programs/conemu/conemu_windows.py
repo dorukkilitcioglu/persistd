@@ -47,7 +47,7 @@ class ConEmuWindows(BaseProgram):
     def start(self):
         """ Starts a new instance of this program
         """
-        pid = self.desktop.launch_program([SETTINGS.CONEMU_PATH, "/cmd", "@%s" % self.startfile_path], open_async=True)
+        pid = self.desktop.launch_program([SETTINGS.conemu_path, "/cmd", "@%s" % self.startfile_path], open_async=True)
         if pid is not None:
             logger.info("Started ConEmu.")
             self.conemu_pid = pid

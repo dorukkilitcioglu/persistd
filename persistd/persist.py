@@ -10,7 +10,7 @@ from persistd.util.command_line import askyn
 from persistd.util.persister import DEFAULT_PROJECT_NAME, Persister
 
 
-def get_all_projects(base_path=SETTINGS.BASE_PATH):
+def get_all_projects(base_path=SETTINGS.base_path):
     return [d for d in next(os.walk(base_path))[1] if not d.startswith('.')]
 
 
@@ -33,7 +33,7 @@ PROGRAM_ACTIONS = [ACTION_ADD, ACTION_REMOVE]
 
 
 def get_action():
-    """ Cooses an action or exits
+    """ Chooses an action or exits
     """
     print('Available actions:')
     actions = [
@@ -52,7 +52,7 @@ def get_action():
         print('{0:d}. {1:s}'.format(i, action))
 
     ind = int(input('Please enter the index of the action you want, or 0 to exit: ')) - 1
-    if ind > -1 and ind < len(actions) - 1:
+    if ind > -1 and ind < len(actions):
         return ALL_ACTIONS[ind]
     elif ind == -1:
         sys.exit(0)
@@ -128,7 +128,7 @@ def get_setting():
 
 
 def main(args):
-    persister = Persister(SETTINGS.BASE_PATH, args.project_name)
+    persister = Persister(SETTINGS.base_path, args.project_name)
 
     # First, take care of options that don't need the project_name
     if args.interactive:
@@ -136,7 +136,7 @@ def main(args):
     elif args.list_projects:
         project_name = get_project()
         print('Launching %s' % project_name)
-        persister = Persister(SETTINGS.BASE_PATH, project_name)
+        persister = Persister(SETTINGS.base_path, project_name)
         persister.launch_project()
     elif args.settings:
         get_setting()
