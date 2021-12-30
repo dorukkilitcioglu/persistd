@@ -2,6 +2,7 @@
 
 import argparse
 import sys
+from typing import NoReturn, List
 
 import persistd.programs as programs
 from persistd.util.projects import get_all_projects
@@ -12,6 +13,7 @@ from persistd.util.persister import DEFAULT_PROJECT_NAME, Persister
 
 ACTION_SETTINGS = 'settings'
 ACTION_LIST_PROJECTS = 'list-projects'
+ACTION_LIST_OPEN = "list-open"
 ACTION_NEW = 'new'
 ACTION_OPEN = 'open'
 ACTION_PERSIST = 'persist'
@@ -20,7 +22,7 @@ ACTION_DELETE = 'delete'
 ACTION_ADD = 'add'
 ACTION_REMOVE = 'remove'
 ACTION_INTERACTIVE = 'interactive'
-ALL_ACTIONS = [ACTION_SETTINGS, ACTION_LIST_PROJECTS, ACTION_NEW, ACTION_OPEN, ACTION_PERSIST,
+ALL_ACTIONS = [ACTION_SETTINGS, ACTION_LIST_PROJECTS, ACTION_LIST_OPEN, ACTION_NEW, ACTION_OPEN, ACTION_PERSIST,
                ACTION_CLOSE, ACTION_DELETE, ACTION_ADD, ACTION_REMOVE, ACTION_INTERACTIVE]
 # actions that operate on a project
 PROJECT_ACTIONS = [ACTION_OPEN, ACTION_PERSIST, ACTION_CLOSE, ACTION_DELETE, ACTION_ADD, ACTION_REMOVE]
@@ -35,6 +37,7 @@ def get_action():
     actions = [
         "Update settings",
         "List all projects under the base path",
+        "List all open projects",
         "Create a new project",
         "Open a project",
         "Persist a project",
@@ -48,7 +51,7 @@ def get_action():
         print('{0:d}. {1:s}'.format(i, action))
 
     ind = int(input('Please enter the index of the action you want, or 0 to exit: ')) - 1
-    if ind > -1 and ind < len(actions):
+    if -1 < ind < len(actions):
         return ALL_ACTIONS[ind]
     elif ind == -1:
         sys.exit(0)
@@ -56,20 +59,37 @@ def get_action():
         sys.exit('The specified index is not valid.')
 
 
-def get_project():
-    """ Chooses a project or exits
-    """
+def list_projects(project_status: str = 'all') -> List[str]:
     print('Available projects:')
-    all_projects = get_all_projects()
+    if project_status == 'all':
+        all_projects = get_all_projects()
+    elif project_status == 'initialized':
+        all_projects = get_all_projects(only_initialized=True)
+    elif project_status == 'open':
+        all_projects = SETTINGS.open_projects
+    else:
+        raise ValueError(f"Invalid project status {project_status}!")
+
     for i, project in enumerate(all_projects, start=1):
         print('{0:d}. {1:s}'.format(i, project))
-    ind = int(input('Please enter the index of the project you want to launch, or 0 to exit: ')) - 1
-    if ind > -1 and ind < len(all_projects):
+
+    return all_projects
+
+def choose_project(all_projects: List[str]) -> str:
+    ind = int(input('Please enter the index of the project you want to select, or 0 to exit: ')) - 1
+    if -1 < ind < len(all_projects):
         return all_projects[ind]
     elif ind == -1:
         sys.exit(0)
     else:
         sys.exit('The specified index is not valid.')
+
+
+def get_project(project_status: str = 'all') -> str:
+    """ Chooses a project or exits
+    """
+    all_projects = list_projects(project_status=project_status)
+    return choose_project(all_projects)
 
 
 def get_program():
@@ -79,7 +99,7 @@ def get_program():
     for i, program in enumerate(programs.all_programs, start=1):
         print('{0:d}. {1:s}'.format(i, program.HUMAN_READABLE_NAME))
     ind = int(input('Please enter the index of the program you want to modify, or 0 to exit: ')) - 1
-    if ind > -1 and ind < len(programs.all_programs):
+    if -1 < ind < len(programs.all_programs):
         return programs.all_programs[ind].CODE_NAME
     elif ind == -1:
         sys.exit(0)
@@ -112,7 +132,7 @@ def get_setting():
     for i, setting in enumerate(all_settings, start=1):
         print('{0:d}. {1:s}'.format(i, setting))
     ind = int(input('Please enter the index of the project you want to launch, or 0 to exit: ')) - 1
-    if ind > -1 and ind < len(all_settings):
+    if -1 < ind < len(all_settings):
         setting = all_settings[ind]
         setattr(SETTINGS, setting, input("Please enter the new value: "))
         SETTINGS.save()
@@ -129,6 +149,14 @@ def main(args):
     # First, take care of options that don't need the project_name
     if args.interactive:
         interactive()
+    elif args.list_open:
+        projects = list_projects(project_status='open')
+        if askyn("Do you want to close the project?"):
+            project_name = choose_project(projects)
+            print('Closing %s' % project_name)
+            persister = Persister(SETTINGS.base_path, project_name)
+            persister.close_project()
+
     elif args.list_projects:
         project_name = get_project()
         print('Launching %s' % project_name)
@@ -176,6 +204,7 @@ def parse_args(args):
     parser.add_argument('-a', '--add', help="add a new program to the project")
     parser.add_argument('-r', '--remove', help="remove a program from the project")
     parser.add_argument('-l', '--list-projects', action='store_true', help="list all projects under the base path")
+    parser.add_argument('-t', '--list-open', action='store_true', help="list all open projects")
     parser.add_argument('project_name', nargs='?', default=DEFAULT_PROJECT_NAME)
     parsed_args = parser.parse_args(args)
     parsed_args.parser = parser
