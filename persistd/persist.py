@@ -2,7 +2,9 @@
 
 import argparse
 import sys
-from typing import NoReturn, List
+from dataclasses import dataclass
+from enum import Enum
+from typing import List
 
 import persistd.programs as programs
 from persistd.util.projects import get_all_projects
@@ -11,44 +13,64 @@ from persistd.util.command_line import askyn
 from persistd.util.persister import DEFAULT_PROJECT_NAME, Persister
 
 
-ACTION_SETTINGS = 'settings'
-ACTION_LIST_PROJECTS = 'list-projects'
-ACTION_LIST_OPEN = "list-open"
-ACTION_NEW = 'new'
-ACTION_OPEN = 'open'
-ACTION_PERSIST = 'persist'
-ACTION_CLOSE = 'close'
-ACTION_DELETE = 'delete'
-ACTION_ADD = 'add'
-ACTION_REMOVE = 'remove'
-ACTION_INTERACTIVE = 'interactive'
-ALL_ACTIONS = [ACTION_SETTINGS, ACTION_LIST_PROJECTS, ACTION_LIST_OPEN, ACTION_NEW, ACTION_OPEN, ACTION_PERSIST,
-               ACTION_CLOSE, ACTION_DELETE, ACTION_ADD, ACTION_REMOVE, ACTION_INTERACTIVE]
+class ProjectStatus(Enum):
+    NoProject = 'no_project'
+    UnInitialized = 'uninitialized'
+    Initialized = 'initialized'
+    Open = 'open'
+
+
+@dataclass
+class PersistAction:
+    name: str
+    description: str
+    project_action: bool
+    program_action: bool
+    applies_to: ProjectStatus
+
+
+ACTION_SETTINGS = PersistAction(name='settings', description="Update settings", project_action=False,
+                                program_action=False, applies_to=ProjectStatus.NoProject)
+ACTION_LIST_PROJECTS = PersistAction(name='list-projects', description="List all projects under the base path",
+                                     project_action=False, program_action=False, applies_to=ProjectStatus.UnInitialized)
+ACTION_LIST_OPEN = PersistAction(name='list-open', description="List all open projects", project_action=False,
+                                 program_action=False, applies_to=ProjectStatus.Open)
+ACTION_LIST_INITIALIZED = PersistAction(name='list-initialized', description="List all persistd (initialized) projects",
+                                        project_action=False, program_action=False,
+                                        applies_to=ProjectStatus.Initialized)
+ACTION_NEW = PersistAction(name='new', description="Create a new project", project_action=True, program_action=False,
+                           applies_to=ProjectStatus.UnInitialized)
+ACTION_OPEN = PersistAction(name='open', description="Open a project", project_action=True, program_action=False,
+                            applies_to=ProjectStatus.Initialized)
+ACTION_PERSIST = PersistAction(name='persist', description="Persist a project", project_action=True,
+                               program_action=False, applies_to=ProjectStatus.Open)
+ACTION_CLOSE = PersistAction(name='close', description="Close & persist a project", project_action=True,
+                             program_action=False, applies_to=ProjectStatus.Open)
+ACTION_DELETE = PersistAction(name='delete', description="Delete a project", project_action=True,
+                              program_action=False, applies_to=ProjectStatus.Initialized)
+ACTION_ADD = PersistAction(name='add', description="Add a new program to a project", project_action=True,
+                           program_action=True, applies_to=ProjectStatus.Initialized)
+ACTION_REMOVE = PersistAction(name='remove', description="Remove a program from a project", project_action=True,
+                              program_action=True, applies_to=ProjectStatus.Initialized)
+ACTION_INTERACTIVE = PersistAction(name='interactive', description="Start interactive mode", project_action=False,
+                                   program_action=False, applies_to=ProjectStatus.NoProject)
+
+ALL_ACTIONS = [ACTION_SETTINGS, ACTION_LIST_PROJECTS, ACTION_LIST_OPEN, ACTION_LIST_INITIALIZED, ACTION_NEW,
+               ACTION_OPEN, ACTION_PERSIST, ACTION_CLOSE, ACTION_DELETE, ACTION_ADD, ACTION_REMOVE, ACTION_INTERACTIVE]
 # actions that operate on a project
 PROJECT_ACTIONS = [ACTION_OPEN, ACTION_PERSIST, ACTION_CLOSE, ACTION_DELETE, ACTION_ADD, ACTION_REMOVE]
 # actions that operate on programs
 PROGRAM_ACTIONS = [ACTION_ADD, ACTION_REMOVE]
 
 
-def get_action():
+def get_action(include_interactive: bool = False) -> PersistAction:
     """ Chooses an action or exits
     """
     print('Available actions:')
-    actions = [
-        "Update settings",
-        "List all projects under the base path",
-        "List all open projects",
-        "Create a new project",
-        "Open a project",
-        "Persist a project",
-        "Close & persist a project",
-        "Delete a project",
-        "Add a new program to a project",
-        "Remove a program from a project",
-    ]
+    actions = [action for action in ALL_ACTIONS if (action != ACTION_INTERACTIVE or include_interactive)]
 
     for i, action in enumerate(actions, start=1):
-        print('{0:d}. {1:s}'.format(i, action))
+        print('{0:d}. {1:s}'.format(i, action.description))
 
     ind = int(input('Please enter the index of the action you want, or 0 to exit: ')) - 1
     if -1 < ind < len(actions):
@@ -59,13 +81,13 @@ def get_action():
         sys.exit('The specified index is not valid.')
 
 
-def list_projects(project_status: str = 'all') -> List[str]:
+def list_projects(project_status: ProjectStatus = ProjectStatus.UnInitialized) -> List[str]:
     print('Available projects:')
-    if project_status == 'all':
+    if project_status == ProjectStatus.UnInitialized:
         all_projects = get_all_projects()
-    elif project_status == 'initialized':
+    elif project_status == ProjectStatus.Initialized:
         all_projects = get_all_projects(only_initialized=True)
-    elif project_status == 'open':
+    elif project_status == ProjectStatus.Open:
         all_projects = SETTINGS.open_projects
     else:
         raise ValueError(f"Invalid project status {project_status}!")
@@ -74,6 +96,7 @@ def list_projects(project_status: str = 'all') -> List[str]:
         print('{0:d}. {1:s}'.format(i, project))
 
     return all_projects
+
 
 def choose_project(all_projects: List[str]) -> str:
     ind = int(input('Please enter the index of the project you want to select, or 0 to exit: ')) - 1
@@ -85,14 +108,14 @@ def choose_project(all_projects: List[str]) -> str:
         sys.exit('The specified index is not valid.')
 
 
-def get_project(project_status: str = 'all') -> str:
+def get_project(project_status: ProjectStatus = ProjectStatus.Initialized) -> str:
     """ Chooses a project or exits
     """
     all_projects = list_projects(project_status=project_status)
     return choose_project(all_projects)
 
 
-def get_program():
+def get_program() -> str:
     """ Chooses a program or exits
     """
     print('Available programs:')
@@ -112,14 +135,14 @@ def interactive():
     """
     args = []
     action = get_action()
-    args.append('--' + action)
-    if action in PROGRAM_ACTIONS:
+    args.append('--' + action.name)
+    if action.program_action:
         print()
         program = get_program()
         args.append(program)
-    if action in PROJECT_ACTIONS:
+    if action.project_action:
         print()
-        project = get_project()
+        project = get_project(project_status=action.applies_to)
         args.append(project)
     parse_args(args)
 
@@ -150,18 +173,26 @@ def main(args):
     if args.interactive:
         interactive()
     elif args.list_open:
-        projects = list_projects(project_status='open')
-        if askyn("Do you want to close the project?"):
+        projects = list_projects(project_status=ProjectStatus.Open)
+        if askyn("Do you want to close a project?"):
             project_name = choose_project(projects)
-            print('Closing %s' % project_name)
+            print(f'Closing {project_name}')
             persister = Persister(SETTINGS.base_path, project_name)
             persister.close_project()
-
+    elif args.list_initialized:
+        projects = list_projects(project_status=ProjectStatus.Initialized)
+        if askyn("Do you want to open a project?"):
+            project_name = choose_project(projects)
+            print(f'Opening {project_name}')
+            persister = Persister(SETTINGS.base_path, project_name)
+            persister.launch_project()
     elif args.list_projects:
-        project_name = get_project()
-        print('Launching %s' % project_name)
-        persister = Persister(SETTINGS.base_path, project_name)
-        persister.launch_project()
+        projects = list_projects(project_status=ProjectStatus.UnInitialized)
+        if askyn("Do you want to open a project?"):
+            project_name = choose_project(projects)
+            print(f'Opening {project_name}')
+            persister = Persister(SETTINGS.base_path, project_name)
+            persister.launch_project()
     elif args.settings:
         get_setting()
     elif args.new:
@@ -204,7 +235,8 @@ def parse_args(args):
     parser.add_argument('-a', '--add', help="add a new program to the project")
     parser.add_argument('-r', '--remove', help="remove a program from the project")
     parser.add_argument('-l', '--list-projects', action='store_true', help="list all projects under the base path")
-    parser.add_argument('-t', '--list-open', action='store_true', help="list all open projects")
+    parser.add_argument('--list-open', action='store_true', help="list all open projects")
+    parser.add_argument('--list-initialized', action='store_true', help="list all persistd projects")
     parser.add_argument('project_name', nargs='?', default=DEFAULT_PROJECT_NAME)
     parsed_args = parser.parse_args(args)
     parsed_args.parser = parser
